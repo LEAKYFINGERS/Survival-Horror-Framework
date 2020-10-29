@@ -54,6 +54,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\TankPlayerController.cs" />
+    <Compile Include="Assets\Scripts\FixedCamera.cs" />
+    <Compile Include="Assets\Scripts\FixedCameraHandler.cs" />
+    <Compile Include="Assets\Scripts\OnTriggerEnteredEventPublisher.cs" />
   </ItemGroup>
   <ItemGroup>
      <None Include="Assets\Third-Party\Kevin Iglesias\3DCharacterDummy\Readme.txt" />
