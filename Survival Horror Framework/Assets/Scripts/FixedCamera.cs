@@ -1,7 +1,7 @@
 ﻿////////////////////////////////////////
 // Author:              LEAKYFINGERS
 // Date created:        29.10.20
-// Date last edited:    29.10.20
+// Date last edited:    30.10.20
 ////////////////////////////////////////
 using System.Collections;
 using System.Collections.Generic;
@@ -9,46 +9,84 @@ using UnityEngine;
 
 namespace SurvivalHorrorFramework
 {
-    // The script for a fixed camera which is activated and deactivated by a FixedCameraHandler accordingly when the player enters any of its activation triggers.
+    // The script for a fixed camera which is activated and deactivated by a FixedCameraHandler according to whether an object tagged "Player" has entered, stayed, or exited any of its FixedCameraActivationTriggers.
     [RequireComponent(typeof(AudioListener))]
     [RequireComponent(typeof(Camera))]
     public class FixedCamera : MonoBehaviour
     {
-        public delegate void EventHandler(FixedCamera sender);
+        public delegate void FixedCameraEventHandler(FixedCamera sender);
 
-        public List<OnTriggerEnteredEventPublisher> ActivationTriggers; // A list of trigger colliders which publish a TriggerEntered event when entered. 
-        public event EventHandler PlayerEnteredActivationTrigger; // An event published when an object tagged 'Player' enters any of the activation collider.
+        public List<FixedCameraActivationTrigger> ActivationTriggers; // A list of associated trigger colliders which publish events detailing whether a object tagged "Player" has entered, stayed, or exited them during this frame. 
+        public event FixedCameraEventHandler PlayerEnteredActivationTrigger;
+        public event FixedCameraEventHandler PlayerStayedInActivationTrigger;
+        public event FixedCameraEventHandler PlayerExitedActivationTrigger;
 
-        // Sets the active status of the audio listener and camera components of the fixed camera.
-        public void SetCameraComponentsActiveStatus(bool activeStatus)
+        public float DistanceFromClosestTriggerCenterToPlayer
         {
-            audioListenerComponent.enabled = activeStatus;
-            cameraComponent.enabled = activeStatus;
+            get
+            {
+                float distanceFromClosestTriggerCenter = 9999.9f;
+                foreach (FixedCameraActivationTrigger trigger in ActivationTriggers)
+                {
+                    if (trigger.DistanceFromTriggerCenterToPlayer < distanceFromClosestTriggerCenter)
+                        distanceFromClosestTriggerCenter = trigger.DistanceFromTriggerCenterToPlayer;
+                }
+
+                return distanceFromClosestTriggerCenter;
+            }
         }
 
+        // The active status of the audio listener and camera components of the fixed camera.
+        public bool CameraComponentsAreActive
+        {
+            get
+            {
+                return (audioListenerComponent.enabled && cameraComponent.enabled);
+            }
+            set
+            {
+                audioListenerComponent.enabled = value;
+                cameraComponent.enabled = value;
+            }
+        }
+
+
         private AudioListener audioListenerComponent;
-        private Camera cameraComponent;        
+        private Camera cameraComponent;
 
         private void Awake()
         {
             audioListenerComponent = GetComponent<AudioListener>();
-            cameraComponent = GetComponent<Camera>();            
+            cameraComponent = GetComponent<Camera>();
         }
 
         private void Start()
         {
-            // Subscribes the OnActivationTriggerEntered() function to be called whenever any of the activation triggers publishes a TriggerEntered event.
-            foreach (OnTriggerEnteredEventPublisher trigger in ActivationTriggers)
-            {                
-                trigger.TriggerEntered += OnActivationTriggerEntered;
+            // Subscribes each of the player trigger events so that they will be invoked by any of the attached FixedCameraActivationTriggers.
+            foreach (FixedCameraActivationTrigger trigger in ActivationTriggers)
+            {
+                trigger.TriggerEnteredByPlayer += OnActivationTriggerEnteredByPlayer;
+                trigger.PlayerStayedInTrigger += OnActivationTriggerStayedInByPlayer;
+                trigger.TriggerExitedByPlayer += OnActivationTriggerExitedByPlayer;
             }
         }
 
-        // If an activation trigger has been entered by an object with the 'Player' tag, publishes the PlayerEnteredActivationTrigger event.
-        private void OnActivationTriggerEntered(string otherTag)
+        private void OnActivationTriggerEnteredByPlayer()
         {
-            if (PlayerEnteredActivationTrigger != null && otherTag == "Player")
+            if (PlayerEnteredActivationTrigger != null)
                 PlayerEnteredActivationTrigger.Invoke(this);
+        }
+
+        private void OnActivationTriggerStayedInByPlayer()
+        {
+            if (PlayerStayedInActivationTrigger != null)
+                PlayerStayedInActivationTrigger.Invoke(this);
+        }
+
+        private void OnActivationTriggerExitedByPlayer()
+        {
+            if (PlayerExitedActivationTrigger != null)
+                PlayerExitedActivationTrigger.Invoke(this);
         }
     }
 }
