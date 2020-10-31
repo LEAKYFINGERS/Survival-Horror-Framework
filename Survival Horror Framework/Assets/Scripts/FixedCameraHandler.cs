@@ -13,10 +13,25 @@ namespace SurvivalHorrorFramework
     public class FixedCameraHandler : MonoBehaviour
     {
         public List<FixedCamera> FixedCameras;
-
+        public PauseHandler ScenePauseHandler;
+        public float ScenePauseOnCameraChangeDuration = 0.25f;
 
         private List<FixedCamera> fixedCamerasWithPlayerInActivationTriggerThisFrame; // A list of the fixed cameras which contain an object tagged "Player" within any of their FixedCameraActivationTriggers during the current frame.
+        private bool isPaused;
         private bool playerExitedACameraActivationTriggerThisFrame;
+
+        private FixedCamera ActiveCamera
+        {
+            get
+            {
+                foreach (FixedCamera camera in FixedCameras)
+                {
+                    if (camera.CameraComponentsAreActive)
+                        return camera;
+                }
+                return null;
+            }
+        }
 
         private bool AreAnyFixedCamerasActive
         {
@@ -30,7 +45,28 @@ namespace SurvivalHorrorFramework
                 return false;
             }
         }
-        
+
+        // A coroutine which pauses the scene for the duration specified by ScenePauseOnCameraChangeDuration before setting the specified fixed camera as the active one.
+        private IEnumerator PauseSceneBeforeSwappingToCameraCoroutine(FixedCamera cameraToActivate)
+        {
+            if (ScenePauseOnCameraChangeDuration > 0.0f)
+            {
+                ScenePauseHandler.PauseScene();
+
+                float timer = 0.0f;
+                while (timer < ScenePauseOnCameraChangeDuration)
+                {
+                    timer += Time.deltaTime;
+                    yield return null;
+                }
+
+                SetAsActiveCameraAndDeactivateAllOthers(cameraToActivate);
+                ScenePauseHandler.UnpauseScene();
+            }
+            else
+                SetAsActiveCameraAndDeactivateAllOthers(cameraToActivate);
+        }
+
         private void Awake()
         {
             fixedCamerasWithPlayerInActivationTriggerThisFrame = new List<FixedCamera>();
@@ -41,7 +77,7 @@ namespace SurvivalHorrorFramework
             foreach (FixedCamera camera in FixedCameras)
             {
                 // Initially deactivates all the fixed cameras so that the one with the activation trigger the player is standing within will be activated.  
-                camera.CameraComponentsAreActive = false;     
+                camera.CameraComponentsAreActive = false;
                 camera.PlayerEnteredActivationTrigger += SetAsActiveCameraIfNoneAreActive;
 
                 // Adds any camera with the player within one of it's activation triggers to the list each frame.
@@ -54,26 +90,50 @@ namespace SurvivalHorrorFramework
 
         private void LateUpdate()
         {
-            // If the player has exited a camera activation trigger during this frame, activates the camera with the activation trigger which the player is currently within and which also has the center position that's closest to the player.
-            if (playerExitedACameraActivationTriggerThisFrame)
+            if (!isPaused)
             {
-                // If the player is currently colliding with only one camera activation trigger, sets the associated camera as the active camera.
-                if (fixedCamerasWithPlayerInActivationTriggerThisFrame.Count == 1)                
-                    SetAsActiveCameraAndDeactivateAllOthers(fixedCamerasWithPlayerInActivationTriggerThisFrame[0]);                
-                else
+                // If the player has exited a camera activation trigger during this frame, activates the camera with the activation trigger which the player is currently within and which also has the center position that's closest to the player.
+                if (playerExitedACameraActivationTriggerThisFrame)
                 {
-                    FixedCamera cameraWithActivationTriggerClosestToPlayer = fixedCamerasWithPlayerInActivationTriggerThisFrame[0];
-                    foreach (FixedCamera fixedCamera in fixedCamerasWithPlayerInActivationTriggerThisFrame)
+                    FixedCamera cameraToActivate;
+
+                    if (fixedCamerasWithPlayerInActivationTriggerThisFrame.Count == 0)
                     {
-                        if (fixedCamera.DistanceFromClosestTriggerCenterToPlayer < cameraWithActivationTriggerClosestToPlayer.DistanceFromClosestTriggerCenterToPlayer)
-                            cameraWithActivationTriggerClosestToPlayer = fixedCamera;
+                        throw new System.Exception("The object tagged 'Player' has moved into an area where no linked FixedCamera activation triggers exist.");
                     }
-                    SetAsActiveCameraAndDeactivateAllOthers(cameraWithActivationTriggerClosestToPlayer);
+                    // If the player is currently colliding with only one camera activation trigger, sets the associated camera as the active camera.
+                    else if (fixedCamerasWithPlayerInActivationTriggerThisFrame.Count == 1)
+                    {
+                        cameraToActivate = fixedCamerasWithPlayerInActivationTriggerThisFrame[0];
+                    }
+                    else
+                    {
+                        FixedCamera cameraWithActivationTriggerClosestToPlayer = fixedCamerasWithPlayerInActivationTriggerThisFrame[0];
+                        foreach (FixedCamera fixedCamera in fixedCamerasWithPlayerInActivationTriggerThisFrame)
+                        {
+                            if (fixedCamera.DistanceFromClosestTriggerCenterToPlayer < cameraWithActivationTriggerClosestToPlayer.DistanceFromClosestTriggerCenterToPlayer)
+                                cameraWithActivationTriggerClosestToPlayer = fixedCamera;
+                        }
+                        cameraToActivate = cameraWithActivationTriggerClosestToPlayer;
+                    }
+
+                    if (cameraToActivate != ActiveCamera)
+                        StartCoroutine("PauseSceneBeforeSwappingToCameraCoroutine", cameraToActivate);
                 }
             }
-            
+
             fixedCamerasWithPlayerInActivationTriggerThisFrame.Clear(); // Clears the list of activation triggers containing the player every frame.
             playerExitedACameraActivationTriggerThisFrame = false; // Resets the 'player exited activation trigger' flag every frame.
+        }
+
+        private void Pause()
+        {
+            isPaused = true;
+        }
+
+        private void Unpause()
+        {
+            isPaused = false;
         }
 
         private void FlagPlayerExitingCameraActivationTrigger(FixedCamera exitedCamera)
@@ -84,11 +144,11 @@ namespace SurvivalHorrorFramework
         private void AddCameraToListWithPlayerInActivationTriggerThisFrame(FixedCamera activeCamera)
         {
             fixedCamerasWithPlayerInActivationTriggerThisFrame.Add(activeCamera);
-        }        
+        }
 
         private void SetAsActiveCameraIfNoneAreActive(FixedCamera activeCamera)
         {
-            if (!AreAnyFixedCamerasActive)            
+            if (!AreAnyFixedCamerasActive)
                 SetAsActiveCameraAndDeactivateAllOthers(activeCamera);
         }
 
