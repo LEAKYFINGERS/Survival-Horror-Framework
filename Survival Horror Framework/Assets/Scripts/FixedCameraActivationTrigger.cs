@@ -1,7 +1,7 @@
 ﻿////////////////////////////////////////
 // Author:              LEAKYFINGERS
 // Date created:        29.10.20
-// Date last edited:    30.10.20
+// Date last edited:    05.11.20
 ////////////////////////////////////////
 using System.Collections;
 using System.Collections.Generic;
@@ -35,19 +35,25 @@ namespace SurvivalHorrorFramework
         private void OnTriggerEnter(Collider other)
         {
             if (TriggerEnteredByPlayer != null && other.tag == "Player")
+            {
                 TriggerEnteredByPlayer.Invoke();
+            }
         }
 
         private void OnTriggerStay(Collider other)
         {
             if (PlayerStayedInTrigger != null && other.tag == "Player")
+            {
                 PlayerStayedInTrigger.Invoke();
+            }
         }
 
         private void OnTriggerExit(Collider other)
         {
             if (TriggerExitedByPlayer != null && other.tag == "Player")
+            {
                 TriggerExitedByPlayer.Invoke();
+            }
         }
 
         private void OnDrawGizmos()

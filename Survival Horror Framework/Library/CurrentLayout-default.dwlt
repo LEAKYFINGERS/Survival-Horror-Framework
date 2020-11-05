@@ -19,9 +19,9 @@ MonoBehaviour:
     width: 1920
     height: 997
   m_ShowMode: 4
-  m_Title: Game
+  m_Title: Project
   m_RootView: {fileID: 2}
-  m_MinSize: {x: 875, y: 542}
+  m_MinSize: {x: 875, y: 521}
   m_MaxSize: {x: 10000, y: 10000}
   m_Maximized: 1
 --- !u!114 &2
@@ -46,7 +46,7 @@ MonoBehaviour:
     y: 0
     width: 1920
     height: 997
-  m_MinSize: {x: 875, y: 542}
+  m_MinSize: {x: 875, y: 300}
   m_MaxSize: {x: 10000, y: 10000}
   m_UseTopView: 1
   m_TopViewHeight: 30
@@ -120,10 +120,10 @@ MonoBehaviour:
     y: 30
     width: 1920
     height: 947
-  m_MinSize: {x: 709, y: 492}
-  m_MaxSize: {x: 18004, y: 14042}
+  m_MinSize: {x: 707, y: 471}
+  m_MaxSize: {x: 18002, y: 14021}
   vertical: 0
-  controlID: 6576
+  controlID: 5346
 --- !u!114 &6
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -145,10 +145,10 @@ MonoBehaviour:
     y: 0
     width: 1442
     height: 947
-  m_MinSize: {x: 231, y: 492}
-  m_MaxSize: {x: 10001, y: 14042}
+  m_MinSize: {x: 231, y: 471}
+  m_MaxSize: {x: 10001, y: 14021}
   vertical: 1
-  controlID: 6881
+  controlID: 5299
 --- !u!114 &7
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -168,8 +168,8 @@ MonoBehaviour:
     y: 0
     width: 1442
     height: 676
-  m_MinSize: {x: 201, y: 221}
-  m_MaxSize: {x: 4001, y: 4021}
+  m_MinSize: {x: 200, y: 200}
+  m_MaxSize: {x: 4000, y: 4000}
   m_ActualView: {fileID: 11}
   m_Panes:
   - {fileID: 12}
@@ -226,8 +226,8 @@ MonoBehaviour:
     y: 0
     width: 277
     height: 947
-  m_MinSize: {x: 277, y: 71}
-  m_MaxSize: {x: 4002, y: 4021}
+  m_MinSize: {x: 275, y: 50}
+  m_MaxSize: {x: 4000, y: 4000}
   m_ActualView: {fileID: 19}
   m_Panes:
   - {fileID: 19}
@@ -388,9 +388,9 @@ MonoBehaviour:
   m_PlayAudio: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: 16.304787, y: -8.149752, z: 5.826913}
+    m_Target: {x: 4.210181, y: -6.9903984, z: -15.001878}
     speed: 2
-    m_Value: {x: 16.304787, y: -8.149752, z: 5.826913}
+    m_Value: {x: 4.210181, y: -6.9903984, z: -15.001878}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -437,9 +437,9 @@ MonoBehaviour:
     m_GridAxis: 1
     m_gridOpacity: 0.5
   m_Rotation:
-    m_Target: {x: 0.054100774, y: 0.66768044, z: -0.048759896, w: 0.7408441}
+    m_Target: {x: 0.014423851, y: 0.98099935, z: -0.080522425, w: 0.1757723}
     speed: 2
-    m_Value: {x: 0.054102086, y: 0.66769665, z: -0.04876108, w: 0.7408621}
+    m_Value: {x: 0.01442423, y: 0.98102516, z: -0.08052454, w: 0.17577691}
   m_Size:
     m_Target: 9.985871
     speed: 2
@@ -498,14 +498,14 @@ MonoBehaviour:
     m_KeySerializationHelper:
     - {fileID: 6313246048625951847, guid: 8ebe66bead6074e4886a451b633febc0, type: 2}
     m_ValueSerializationHelper:
-    - e00: 0.9873684
+    - e00: 1.0133533
       e01: 0
       e02: 0
-      e03: -34.36841
+      e03: 26.727709
       e10: 0
-      e11: 0.9873684
+      e11: 1.0133533
       e12: 0
-      e13: 214.20001
+      e13: 135.82095
       e20: 0
       e21: 0
       e22: 1
@@ -624,12 +624,12 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/Scripts
+    - Assets/Models/RE2 Leon
     m_Globs: []
   m_ViewMode: 1
   m_StartGridSize: 64
   m_LastFolders:
-  - Assets/Scripts
+  - Assets/Models/RE2 Leon
   m_LastFoldersGridSize: -1
   m_LastProjectPath: C:\Users\spudm\Documents\GitHub\Survival-Horror-Framework\Survival
     Horror Framework
@@ -637,9 +637,9 @@ MonoBehaviour:
     m_IsLocked: 0
   m_FolderTreeState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: 7c3e0000
-    m_LastClickedID: 15996
-    m_ExpandedIDs: 00000000de3d0000e03d0000e23d0000823e000000ca9a3b
+    m_SelectedIDs: ee400000
+    m_LastClickedID: 16622
+    m_ExpandedIDs: 0000000056400000584000005a4000005c40000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -667,7 +667,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 00000000de3d0000e03d0000e23d0000823e000000ca9a3b
+    m_ExpandedIDs: 0000000056400000584000005a4000005c40000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -772,12 +772,12 @@ MonoBehaviour:
     serializedVersion: 2
     x: 0
     y: 749
-    width: 1364
+    width: 1441
     height: 250
   m_ViewDataDictionary: {fileID: 0}
   m_LockTracker:
     m_IsLocked: 0
-  m_LastSelectedObjectID: -61896
+  m_LastSelectedObjectID: 15854
 --- !u!114 &19
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -846,9 +846,9 @@ MonoBehaviour:
   m_SceneHierarchy:
     m_TreeViewState:
       scrollPos: {x: 0, y: 0}
-      m_SelectedIDs: 460dffff
-      m_LastClickedID: 0
-      m_ExpandedIDs: 24fbffff
+      m_SelectedIDs: ee3d0000
+      m_LastClickedID: 15854
+      m_ExpandedIDs: 18f4ffff
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 

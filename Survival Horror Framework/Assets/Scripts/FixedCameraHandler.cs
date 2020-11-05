@@ -1,7 +1,7 @@
 ﻿////////////////////////////////////////
 // Author:              LEAKYFINGERS
 // Date created:        29.10.20
-// Date last edited:    30.10.20
+// Date last edited:    05.11.20
 ////////////////////////////////////////
 using System.Collections;
 using System.Collections.Generic;
@@ -27,7 +27,9 @@ namespace SurvivalHorrorFramework
                 foreach (FixedCamera camera in FixedCameras)
                 {
                     if (camera.CameraComponentsAreActive)
+                    {
                         return camera;
+                    }
                 }
                 return null;
             }
@@ -40,7 +42,9 @@ namespace SurvivalHorrorFramework
                 foreach (FixedCamera camera in FixedCameras)
                 {
                     if (camera.CameraComponentsAreActive)
+                    {
                         return true;
+                    }
                 }
                 return false;
             }
@@ -64,7 +68,9 @@ namespace SurvivalHorrorFramework
                 ScenePauseHandler.UnpauseScene();
             }
             else
+            {
                 SetAsActiveCameraAndDeactivateAllOthers(cameraToActivate);
+            }
         }
 
         private void Awake()
@@ -112,13 +118,17 @@ namespace SurvivalHorrorFramework
                         foreach (FixedCamera fixedCamera in fixedCamerasWithPlayerInActivationTriggerThisFrame)
                         {
                             if (fixedCamera.DistanceFromClosestTriggerCenterToPlayer < cameraWithActivationTriggerClosestToPlayer.DistanceFromClosestTriggerCenterToPlayer)
+                            {
                                 cameraWithActivationTriggerClosestToPlayer = fixedCamera;
+                            }
                         }
                         cameraToActivate = cameraWithActivationTriggerClosestToPlayer;
                     }
 
                     if (cameraToActivate != ActiveCamera)
+                    {
                         StartCoroutine("PauseSceneBeforeSwappingToCameraCoroutine", cameraToActivate);
+                    }
                 }
             }
 
@@ -149,7 +159,9 @@ namespace SurvivalHorrorFramework
         private void SetAsActiveCameraIfNoneAreActive(FixedCamera activeCamera)
         {
             if (!AreAnyFixedCamerasActive)
+            {
                 SetAsActiveCameraAndDeactivateAllOthers(activeCamera);
+            }
         }
 
         private void SetAsActiveCameraAndDeactivateAllOthers(FixedCamera activeCamera)

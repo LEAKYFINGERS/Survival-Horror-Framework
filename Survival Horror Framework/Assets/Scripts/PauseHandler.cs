@@ -1,7 +1,7 @@
 ﻿//////////////////////////////////////////////////
 // Author/s:            LEAKYFINGERS   
 // Date created:        31.10.20
-// Date last edited:    31.10.20
+// Date last edited:    05.11.20
 //////////////////////////////////////////////////
 using System.Collections;
 using System.Collections.Generic;
@@ -24,7 +24,9 @@ namespace SurvivalHorrorFramework
             {
                 Object[] objects = FindObjectsOfType(typeof(GameObject));
                 foreach (GameObject gameObject in objects)
+                {
                     gameObject.SendMessage("Pause", SendMessageOptions.DontRequireReceiver);
+                }
 
                 isScenePaused = true;
                 Debug.Log("Scene paused"); // DEBUG
@@ -38,7 +40,9 @@ namespace SurvivalHorrorFramework
             {
                 Object[] objects = FindObjectsOfType(typeof(GameObject));
                 foreach (GameObject gameObject in objects)
+                {
                     gameObject.SendMessage("Unpause", SendMessageOptions.DontRequireReceiver);
+                }
 
                 isScenePaused = false;
                 Debug.Log("Scene unpaused"); // DEBUG

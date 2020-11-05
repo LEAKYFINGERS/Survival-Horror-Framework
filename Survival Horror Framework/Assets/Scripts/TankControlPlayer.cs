@@ -1,11 +1,12 @@
 ﻿////////////////////////////////////////
 // Author:              LEAKYFINGERS
 // Date created:        25.10.20
-// Date last edited:    03.11.20
+// Date last edited:    05.11.20
 ////////////////////////////////////////
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace SurvivalHorrorFramework
 {
@@ -14,10 +15,12 @@ namespace SurvivalHorrorFramework
     [RequireComponent(typeof(CharacterController))]
     public class TankControlPlayer : MonoBehaviour
     {
-        public float WalkSpeed = 2.0f; // The movement speed of the player in units-per-second when walking forwards or backwards.
+        public float WalkSpeed = 2.0f; // The movement speed of the player in units-per-second when walking forwards.
+        public float RetreatSpeed = 1.5f; // The movement speed of the player in units-per-second when walking backwards.
         public float RunSpeed = 4.0f; // The movement speed of the player in units-per-second when running forwards - cannot run backwards.
         public float StationaryRotateSpeed = 270.0f; // The rotation speed of the player in degrees-per-second when standing in place.
         public float MovingRotateSpeed = 90.0f; // The rotation speed of the player in degrees-per-second when walking or running.
+        public float AnimationBlendDuration = 0.15f; // The duration of the animtion crossfades when the player transitions between clips.
 
 
         private Animator animatorComponent;
@@ -43,23 +46,57 @@ namespace SurvivalHorrorFramework
         {
             transform.Rotate(Vector3.up, Input.GetAxis("Horizontal") * (Input.GetAxis("Vertical") != 0.0f ? MovingRotateSpeed : StationaryRotateSpeed) * Time.deltaTime);
 
-            characterControllerComponent.Move(transform.forward * Input.GetAxis("Vertical") * (Input.GetAxis("Run") == 1.0f && Input.GetAxis("Vertical") > 0.0f ? RunSpeed : WalkSpeed) * Time.deltaTime);
+            float moveSpeed = 0.0f;
+            if (Input.GetAxis("Vertical") == 1.0f)
+            {
+                moveSpeed = (Input.GetAxis("Run") == 1.0f ? RunSpeed : WalkSpeed);
+            }
+            else if (Input.GetAxis("Vertical") == -1.0f)
+            {
+                moveSpeed = -RetreatSpeed;
+            }
+            characterControllerComponent.Move(transform.forward * moveSpeed * Time.deltaTime);
         }
 
         private void UpdateAnimation()
         {
-            if (Input.GetAxis("Horizontal") != 0.0f || Input.GetAxis("Vertical") != 0.0f)
-                animatorComponent.CrossFade("Walk", 0.5f);
-            else
-                animatorComponent.Play("Idle");
+            // The animator component will return a clip info count of 0 if animation crossfading is currently occuring - if not, the animator is in a valid state to potentially start crossfading to a new animation.
+            if (animatorComponent.GetCurrentAnimatorClipInfoCount(0) > 0)
+            {
+                // If the player is walking forwards and pressing the run input, plays the 'Run' animation.
+                if ((Input.GetAxis("Vertical") > 0.0f && Input.GetAxis("Run") == 1.0f) && animatorComponent.GetCurrentAnimatorClipInfo(0)[0].clip.name != "Run")
+                {
+                    animatorComponent.CrossFadeInFixedTime("Run", AnimationBlendDuration);
+                }
+                // Else if the player is walking forwards or turning on the spot, plays the 'Walk' animation.
+                else if ((Input.GetAxis("Run") == 0.0f && Input.GetAxis("Vertical") > 0.0f || (Input.GetAxis("Vertical") == 0.0f && Input.GetAxis("Horizontal") != 0.0f)) && animatorComponent.GetCurrentAnimatorClipInfo(0)[0].clip.name != "Walk")
+                {
+                    animatorComponent.CrossFadeInFixedTime("Walk", AnimationBlendDuration);
+                }
+                // Else if the player is walking backwards plays the 'Retreat' animation.
+                else if (Input.GetAxis("Vertical") < 0.0f && animatorComponent.GetCurrentAnimatorClipInfo(0)[0].clip.name != "Retreat")
+                {
+                    animatorComponent.CrossFadeInFixedTime("Retreat", AnimationBlendDuration);
+                }
+                // Else plays the 'Idle' animation.
+                else if ((Input.GetAxis("Horizontal") == 0.0f && Input.GetAxis("Vertical") == 0.0f) && animatorComponent.GetCurrentAnimatorClipInfo(0)[0].clip.name != "Idle")
+                {
+                    animatorComponent.CrossFadeInFixedTime("Idle", AnimationBlendDuration);
+                }
+            }
         }
+
         private void Pause()
         {
+            animatorComponent.speed = 0.0f;
+
             isPaused = true;
         }
 
         private void Unpause()
         {
+            animatorComponent.speed = 1.0f;
+
             isPaused = false;
         }
     }

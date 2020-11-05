@@ -1,7 +1,7 @@
 ﻿////////////////////////////////////////
 // Author:              LEAKYFINGERS
 // Date created:        29.10.20
-// Date last edited:    30.10.20
+// Date last edited:    05.11.20
 ////////////////////////////////////////
 using System.Collections;
 using System.Collections.Generic;
@@ -29,7 +29,9 @@ namespace SurvivalHorrorFramework
                 foreach (FixedCameraActivationTrigger trigger in ActivationTriggers)
                 {
                     if (trigger.DistanceFromTriggerCenterToPlayer < distanceFromClosestTriggerCenter)
+                    {
                         distanceFromClosestTriggerCenter = trigger.DistanceFromTriggerCenterToPlayer;
+                    }
                 }
 
                 return distanceFromClosestTriggerCenter;
@@ -74,19 +76,25 @@ namespace SurvivalHorrorFramework
         private void OnActivationTriggerEnteredByPlayer()
         {
             if (PlayerEnteredActivationTrigger != null)
+            {
                 PlayerEnteredActivationTrigger.Invoke(this);
+            }
         }
 
         private void OnActivationTriggerStayedInByPlayer()
         {
             if (PlayerStayedInActivationTrigger != null)
+            {
                 PlayerStayedInActivationTrigger.Invoke(this);
+            }
         }
 
         private void OnActivationTriggerExitedByPlayer()
         {
             if (PlayerExitedActivationTrigger != null)
+            {
                 PlayerExitedActivationTrigger.Invoke(this);
+            }
         }
     }
 }
