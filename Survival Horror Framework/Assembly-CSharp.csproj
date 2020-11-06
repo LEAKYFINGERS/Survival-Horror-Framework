@@ -53,10 +53,6 @@
     <UnityVersion>2020.1.10f1</UnityVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Assets\Scripts\TankControlPlayer.cs" />
-    <Compile Include="Assets\Scripts\FixedCameraHandler.cs" />
-    <Compile Include="Assets\Scripts\FixedCameraActivationTrigger.cs" />
-    <Compile Include="Assets\Scripts\FixedCamera.cs" />
     <Compile Include="Assets\Third-Party\LeakyFingers Utility Package\Standard Assets (Modified)\FirstPersonController.cs" />
     <Compile Include="Assets\Third-Party\LeakyFingers Utility Package\Shaders\Post-Processing\MaskedColorPostProcessEffect.cs" />
     <Compile Include="Assets\Third-Party\LeakyFingers Utility Package\Shake.cs" />
@@ -64,31 +60,36 @@
     <Compile Include="Assets\Third-Party\LeakyFingers Utility Package\Scriptable Objects\Dialog.cs" />
     <Compile Include="Assets\Third-Party\LeakyFingers Utility Package\Flashlight.cs" />
     <Compile Include="Assets\Third-Party\LeakyFingers Utility Package\FlythroughCamera.cs" />
+    <Compile Include="Assets\Third-Party\Retro 3D Shader Pack for Unity\Example Scene\Scripts\Rotate.cs" />
+    <Compile Include="Assets\Scripts\TankControlPlayer.cs" />
+    <Compile Include="Assets\Third-Party\Retro 3D Shader Pack for Unity\Example Scene\Scripts\EmissiveSphere.cs" />
     <Compile Include="Assets\Third-Party\LeakyFingers Utility Package\MouseLookCamera.cs" />
     <Compile Include="Assets\Third-Party\LeakyFingers Utility Package\Scriptable Objects\DialogList.cs" />
     <Compile Include="Assets\Third-Party\LeakyFingers Utility Package\ScenePause.cs" />
     <Compile Include="Assets\Third-Party\LeakyFingers Utility Package\Standard Assets (Modified)\MouseLook.cs" />
     <Compile Include="Assets\Third-Party\LeakyFingers Utility Package\LightFlicker.cs" />
+    <Compile Include="Assets\Scripts\FixedCameraHandler.cs" />
     <Compile Include="Assets\Third-Party\LeakyFingers Utility Package\EquippableObject.cs" />
+    <Compile Include="Assets\Third-Party\Retro 3D Shader Pack for Unity\Example Scene\Scripts\ExampleSceneCamera.cs" />
+    <Compile Include="Assets\Third-Party\Retro 3D Shader Pack for Unity\Shaders\Post-Processing\RetroPostProcessEffect.cs" />
     <Compile Include="Assets\Third-Party\LeakyFingers Utility Package\InteractiveObject.cs" />
     <Compile Include="Assets\Third-Party\LeakyFingers Utility Package\Shaders\Post-Processing\MaskedTexturePostProcessEffect.cs" />
     <Compile Include="Assets\Third-Party\LeakyFingers Utility Package\ExaminableObject.cs" />
+    <Compile Include="Assets\Scripts\PauseHandler.cs" />
     <Compile Include="Assets\Third-Party\LeakyFingers Utility Package\Standard Assets (Modified)\LerpControlledBob.cs" />
     <Compile Include="Assets\Third-Party\LeakyFingers Utility Package\EquippableObjectsManager.cs" />
+    <Compile Include="Assets\Scripts\FixedCameraActivationTrigger.cs" />
     <Compile Include="Assets\Third-Party\LeakyFingers Utility Package\BillboardAroundUpAxis.cs" />
     <Compile Include="Assets\Third-Party\LeakyFingers Utility Package\Door.cs" />
     <Compile Include="Assets\Third-Party\LeakyFingers Utility Package\OrbitingCamera.cs" />
     <Compile Include="Assets\Third-Party\LeakyFingers Utility Package\InteractiveObjectReticle.cs" />
     <Compile Include="Assets\Third-Party\LeakyFingers Utility Package\CameraFade.cs" />
     <Compile Include="Assets\Third-Party\LeakyFingers Utility Package\DialogUIDisplay.cs" />
+    <Compile Include="Assets\Scripts\FixedCamera.cs" />
     <Compile Include="Assets\Third-Party\LeakyFingers Utility Package\Standard Assets (Modified)\FOVKick.cs" />
     <Compile Include="Assets\Third-Party\LeakyFingers Utility Package\ToggleableLight.cs" />
     <Compile Include="Assets\Third-Party\LeakyFingers Utility Package\Shaders\Post-Processing\ColorTintPostProcessEffect.cs" />
-    <Compile Include="Assets\Third-Party\Retro 3D Shader Pack for Unity\Example Scene\Scripts\Rotate.cs" />
-    <Compile Include="Assets\Third-Party\Retro 3D Shader Pack for Unity\Example Scene\Scripts\EmissiveSphere.cs" />
-    <Compile Include="Assets\Third-Party\Retro 3D Shader Pack for Unity\Example Scene\Scripts\ExampleSceneCamera.cs" />
-    <Compile Include="Assets\Third-Party\Retro 3D Shader Pack for Unity\Shaders\Post-Processing\RetroPostProcessEffect.cs" />
-    <Compile Include="Assets\Scripts\PauseHandler.cs" />
+    <Compile Include="Assets\Scripts\FootstepHandler.cs" />
   </ItemGroup>
   <ItemGroup>
      <None Include="Assets\Third-Party\Retro 3D Shader Pack for Unity\Shaders\CG_Includes\RetroFlatLit.cginc" />
@@ -661,8 +662,14 @@
     <Reference Include="Unity.Timeline">
       <HintPath>Library\ScriptAssemblies\Unity.Timeline.dll</HintPath>
     </Reference>
+    <Reference Include="Unity.Postprocessing.Editor">
+      <HintPath>Library\ScriptAssemblies\Unity.Postprocessing.Editor.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.Rider.Editor">
       <HintPath>Library\ScriptAssemblies\Unity.Rider.Editor.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.Postprocessing.Runtime">
+      <HintPath>Library\ScriptAssemblies\Unity.Postprocessing.Runtime.dll</HintPath>
     </Reference>
     <Reference Include="Unity.VisualStudio.Editor">
       <HintPath>Library\ScriptAssemblies\Unity.VisualStudio.Editor.dll</HintPath>
@@ -672,12 +679,6 @@
     </Reference>
     <Reference Include="UnityEditor.UI">
       <HintPath>Library\ScriptAssemblies\UnityEditor.UI.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.Postprocessing.Editor">
-      <HintPath>Library\ScriptAssemblies\Unity.Postprocessing.Editor.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.Postprocessing.Runtime">
-      <HintPath>Library\ScriptAssemblies\Unity.Postprocessing.Runtime.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
