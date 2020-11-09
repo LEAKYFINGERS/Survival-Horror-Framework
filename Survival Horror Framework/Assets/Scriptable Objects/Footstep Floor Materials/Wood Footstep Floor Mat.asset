@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1c60bedd10118741935a494a7e30939, type: 3}
+  m_Name: Wood Footstep Floor Mat
+  m_EditorClassIdentifier: 
+  FootstepWalkSound: {fileID: 8300000, guid: 64916d7c18f19ea4ba09e3fc2e08adbc, type: 3}
+  FootstepRunSound: {fileID: 8300000, guid: 680d982800ae8dd4f937ec047249edeb, type: 3}
+  FloorMaterial: {fileID: 2100000, guid: 602d112c1cfddfb42829998f57f85929, type: 2}
