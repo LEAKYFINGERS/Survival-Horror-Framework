@@ -1,7 +1,7 @@
 ﻿////////////////////////////////////////
 // Author:              LEAKYFINGERS
 // Date created:        25.10.20
-// Date last edited:    05.11.20
+// Date last edited:    11.11.20
 ////////////////////////////////////////
 using System.Collections;
 using System.Collections.Generic;
@@ -44,7 +44,7 @@ namespace SurvivalHorrorFramework
 
         private void UpdateMovement()
         {
-            transform.Rotate(Vector3.up, Input.GetAxis("Horizontal") * (Input.GetAxis("Vertical") != 0.0f ? MovingRotateSpeed : StationaryRotateSpeed) * Time.deltaTime);
+            transform.Rotate(Vector3.up, Input.GetAxis("Horizontal") * (Input.GetAxis("Vertical") != 0.0f ? MovingRotateSpeed : StationaryRotateSpeed) * Time.deltaTime); 
 
             float moveSpeed = 0.0f;
             if (Input.GetAxis("Vertical") == 1.0f)
@@ -56,6 +56,17 @@ namespace SurvivalHorrorFramework
                 moveSpeed = -RetreatSpeed;
             }
             characterControllerComponent.Move(transform.forward * moveSpeed * Time.deltaTime);
+
+            // Ensures the player remains grounded at all times.
+            RaycastHit raycastHit;
+            Ray ray = new Ray(transform.position, Vector3.down);
+            if(Physics.Raycast(ray, out raycastHit))
+            {
+                if ((transform.position - raycastHit.point).magnitude > characterControllerComponent.skinWidth)
+                {
+                    characterControllerComponent.Move(Vector3.down * raycastHit.distance);
+                }
+            }
         }
 
         private void UpdateAnimation()

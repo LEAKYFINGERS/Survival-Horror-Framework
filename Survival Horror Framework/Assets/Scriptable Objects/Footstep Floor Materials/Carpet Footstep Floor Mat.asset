@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1c60bedd10118741935a494a7e30939, type: 3}
   m_Name: Carpet Footstep Floor Mat
   m_EditorClassIdentifier: 
-  FootstepWalkSound: {fileID: 8300000, guid: 90f22619d2ccc734da5613af2a8e659c, type: 3}
-  FootstepRunSound: {fileID: 8300000, guid: ee8735d99263a0140b78108c625c4ced, type: 3}
-  FloorMaterial: {fileID: 2100000, guid: 32d6d203ef8d01042896faccafcdfb03, type: 2}
+  FootstepWalkSound: {fileID: 8300000, guid: ee8735d99263a0140b78108c625c4ced, type: 3}
+  FootstepRunSound: {fileID: 8300000, guid: 90f22619d2ccc734da5613af2a8e659c, type: 3}
+  FloorTextures:
+  - {fileID: 2800000, guid: 67442dd9787d3084d9ebe7ade824f615, type: 3}

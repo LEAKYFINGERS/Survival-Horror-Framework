@@ -1,7 +1,7 @@
 ﻿////////////////////////////////////////
 // Author:              LEAKYFINGERS
 // Date created:        29.10.20
-// Date last edited:    05.11.20
+// Date last edited:    11.11.20
 ////////////////////////////////////////
 using System.Collections;
 using System.Collections.Generic;
@@ -12,7 +12,7 @@ namespace SurvivalHorrorFramework
     // The script used to handle the activation and deactivation of all the FixedCamera instances within a room.
     public class FixedCameraHandler : MonoBehaviour
     {
-        public List<FixedCamera> FixedCameras;
+        public FixedCamera[] FixedCameras;
         public PauseHandler ScenePauseHandler;
         public float ScenePauseOnCameraChangeDuration = 0.25f;
 

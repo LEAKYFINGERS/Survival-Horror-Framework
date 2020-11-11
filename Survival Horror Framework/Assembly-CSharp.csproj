@@ -83,6 +83,7 @@
     <Compile Include="Assets\Third-Party\LeakyFingers Utility Package\BillboardAroundUpAxis.cs" />
     <Compile Include="Assets\Third-Party\LeakyFingers Utility Package\Door.cs" />
     <Compile Include="Assets\Third-Party\LeakyFingers Utility Package\OrbitingCamera.cs" />
+    <Compile Include="Assets\Scripts\FootstepFloorTextures.cs" />
     <Compile Include="Assets\Third-Party\LeakyFingers Utility Package\InteractiveObjectReticle.cs" />
     <Compile Include="Assets\Third-Party\LeakyFingers Utility Package\CameraFade.cs" />
     <Compile Include="Assets\Third-Party\LeakyFingers Utility Package\DialogUIDisplay.cs" />
@@ -90,7 +91,6 @@
     <Compile Include="Assets\Third-Party\LeakyFingers Utility Package\Standard Assets (Modified)\FOVKick.cs" />
     <Compile Include="Assets\Third-Party\LeakyFingers Utility Package\ToggleableLight.cs" />
     <Compile Include="Assets\Third-Party\LeakyFingers Utility Package\Shaders\Post-Processing\ColorTintPostProcessEffect.cs" />
-    <Compile Include="Assets\Scripts\FootstepFloorMaterial.cs" />
   </ItemGroup>
   <ItemGroup>
      <None Include="Assets\Third-Party\Retro 3D Shader Pack for Unity\Shaders\CG_Includes\RetroFlatLit.cginc" />

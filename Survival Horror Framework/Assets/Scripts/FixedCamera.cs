@@ -1,7 +1,7 @@
 ﻿////////////////////////////////////////
 // Author:              LEAKYFINGERS
 // Date created:        29.10.20
-// Date last edited:    05.11.20
+// Date last edited:    11.11.20
 ////////////////////////////////////////
 using System.Collections;
 using System.Collections.Generic;
@@ -16,7 +16,7 @@ namespace SurvivalHorrorFramework
     {
         public delegate void FixedCameraEventHandler(FixedCamera sender);
 
-        public List<FixedCameraActivationTrigger> ActivationTriggers; // A list of associated trigger colliders which publish events detailing whether a object tagged "Player" has entered, stayed, or exited them during this frame. 
+        public FixedCameraActivationTrigger[] ActivationTriggers; // A list of associated trigger colliders which publish events detailing whether a object tagged "Player" has entered, stayed, or exited them during this frame. 
         public event FixedCameraEventHandler PlayerEnteredActivationTrigger;
         public event FixedCameraEventHandler PlayerStayedInActivationTrigger;
         public event FixedCameraEventHandler PlayerExitedActivationTrigger;

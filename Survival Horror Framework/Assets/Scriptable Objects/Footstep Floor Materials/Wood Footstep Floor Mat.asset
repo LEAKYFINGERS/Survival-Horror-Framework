@@ -14,4 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   FootstepWalkSound: {fileID: 8300000, guid: 64916d7c18f19ea4ba09e3fc2e08adbc, type: 3}
   FootstepRunSound: {fileID: 8300000, guid: 680d982800ae8dd4f937ec047249edeb, type: 3}
-  FloorMaterial: {fileID: 2100000, guid: 602d112c1cfddfb42829998f57f85929, type: 2}
+  FloorTextures:
+  - {fileID: 2800000, guid: 86aef6bd84445de4fbee4e419cc2a974, type: 3}
