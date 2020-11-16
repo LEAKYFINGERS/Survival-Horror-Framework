@@ -1,7 +1,7 @@
 ﻿////////////////////////////////////////
 // Author:              LEAKYFINGERS
 // Date created:        29.10.20
-// Date last edited:    11.11.20
+// Date last edited:    16.11.20
 ////////////////////////////////////////
 using System.Collections;
 using System.Collections.Generic;
@@ -15,6 +15,8 @@ namespace SurvivalHorrorFramework
         public FixedCamera[] FixedCameras;
         public PauseHandler ScenePauseHandler;
         public float ScenePauseOnCameraChangeDuration = 0.25f;
+        public GameMenu GameMenuCanvas; // The canvas used to display the in-game menu - because it may exist in world space for any post-processing effects to be applied the FixedCameraHandler automatically positions it in front of the currently active fixed camera.
+
 
         private List<FixedCamera> fixedCamerasWithPlayerInActivationTriggerThisFrame; // A list of the fixed cameras which contain an object tagged "Player" within any of their FixedCameraActivationTriggers during the current frame.
         private bool isPaused;
@@ -170,6 +172,11 @@ namespace SurvivalHorrorFramework
             {
                 camera.CameraComponentsAreActive = (camera == activeCamera);
             }
+
+            // Parents and positions the game menu in front of the active camera.
+            GameMenuCanvas.transform.SetParent(activeCamera.transform);
+            GameMenuCanvas.transform.localPosition = Vector3.forward * GameMenuCanvas.ForwardOffsetFromCamera;
+            GameMenuCanvas.transform.localRotation = Quaternion.identity;
         }
     }
 }
