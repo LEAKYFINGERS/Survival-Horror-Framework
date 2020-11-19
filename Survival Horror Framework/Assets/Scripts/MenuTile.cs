@@ -1,7 +1,7 @@
 ﻿////////////////////////////////////////
 // Author:              LEAKYFINGERS
 // Date created:        17.11.20
-// Date last edited:    18.11.20
+// Date last edited:    19.11.20
 ////////////////////////////////////////
 using System.Collections;
 using System.Collections.Generic;
@@ -38,11 +38,13 @@ namespace SurvivalHorrorFramework
             }
         }
 
+        public virtual void ActivateTile(GameMenu gameMenu) { }        
 
-        private Image imageComponent;
-        private bool isSelected;
 
-        private void Awake()
+        protected Image imageComponent;
+        protected bool isSelected;
+
+        protected void Awake()
         {
             imageComponent = GetComponent<Image>();
             IsSelected = false;

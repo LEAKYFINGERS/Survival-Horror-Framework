@@ -18,14 +18,20 @@ namespace SurvivalHorrorFramework
         public AudioClip DeactivationSound;
         public Image ActivationFadeImage; // The UI image (usually solid black) which fades in and out each time the menu transitions between activated and deactivated.
         public Image BackgroundImage;
-        public List<MenuTile> MenuTiles; // TEST
+        public List<MenuTile> ParentMenuTileGroup; // TEST
         public PauseHandler ScenePauseHandler;
         public float ForwardOffsetFromCamera = 0.31f; // The offset value used to position the menu canvas in front of the active camera.   
         public float ActivationFadeDuration = 0.25f;
 
+        public void PushMenuTileGroup(List<MenuTile> menuTileGroup)
+        {
+
+        }
+
 
         private AudioSource audioSourceComponent;
         private Color activationFadeImageColor; // The initial color tint of the activation fade image - stored so the image can transition between this color and completely transparent.
+        private Stack<List<MenuTile>> menuTileGroups; // TEST
         private bool isMenuActive;
         private bool wasMenuInputDownDuringPreviousUpdate;
         private bool wasHorizontalInputDownDuringPreviousUpdate;
@@ -41,7 +47,7 @@ namespace SurvivalHorrorFramework
             if (isBeingActivated)
             {
                 ScenePauseHandler.PauseScene();
-                SetSelectedMenuTile(MenuTiles[0]); // Resets the currently selected menu tile to the first in the list. 
+                SetSelectedMenuTile(menuTileGroups.Peek()[0]); // Resets the currently selected menu tile to the first in the list. 
             }
             else
             {
@@ -96,7 +102,9 @@ namespace SurvivalHorrorFramework
 
         private void Start()
         {
-            SetSelectedMenuTile(MenuTiles[0]);
+            menuTileGroups = new Stack<List<MenuTile>>();
+            menuTileGroups.Push(ParentMenuTileGroup);
+            SetSelectedMenuTile(menuTileGroups.Peek()[0]);
         }
 
         private void Update()
@@ -123,21 +131,21 @@ namespace SurvivalHorrorFramework
         private void UpdateMenuTiles()
         {
             // Updates which is the currently selected menu tile according to the player selection inputs.
-            if (Input.GetAxis("Horizontal") == -1.0f && !wasHorizontalInputDownDuringPreviousUpdate && MenuTiles[currentlySelectedMenuTileIndex].TileToLeft)
+            if (Input.GetAxis("Horizontal") == -1.0f && !wasHorizontalInputDownDuringPreviousUpdate && menuTileGroups.Peek()[currentlySelectedMenuTileIndex].TileToLeft)
             {
-                SetSelectedMenuTile(MenuTiles[currentlySelectedMenuTileIndex].TileToLeft, true);
+                SetSelectedMenuTile(menuTileGroups.Peek()[currentlySelectedMenuTileIndex].TileToLeft, true);
             }
-            else if (Input.GetAxis("Horizontal") == 1.0f && !wasHorizontalInputDownDuringPreviousUpdate && MenuTiles[currentlySelectedMenuTileIndex].TileToRight)
+            else if (Input.GetAxis("Horizontal") == 1.0f && !wasHorizontalInputDownDuringPreviousUpdate && menuTileGroups.Peek()[currentlySelectedMenuTileIndex].TileToRight)
             {
-                SetSelectedMenuTile(MenuTiles[currentlySelectedMenuTileIndex].TileToRight, true);
+                SetSelectedMenuTile(menuTileGroups.Peek()[currentlySelectedMenuTileIndex].TileToRight, true);
             }
-            else if (Input.GetAxis("Vertical") == 1.0f && !wasVerticalInputDownDuringPreviousUpdate && MenuTiles[currentlySelectedMenuTileIndex].TileAbove)
+            else if (Input.GetAxis("Vertical") == 1.0f && !wasVerticalInputDownDuringPreviousUpdate && menuTileGroups.Peek()[currentlySelectedMenuTileIndex].TileAbove)
             {
-                SetSelectedMenuTile(MenuTiles[currentlySelectedMenuTileIndex].TileAbove, true);
+                SetSelectedMenuTile(menuTileGroups.Peek()[currentlySelectedMenuTileIndex].TileAbove, true);
             }
-            else if (Input.GetAxis("Vertical") == -1.0f && !wasVerticalInputDownDuringPreviousUpdate && MenuTiles[currentlySelectedMenuTileIndex].TileBelow)
+            else if (Input.GetAxis("Vertical") == -1.0f && !wasVerticalInputDownDuringPreviousUpdate && menuTileGroups.Peek()[currentlySelectedMenuTileIndex].TileBelow)
             {
-                SetSelectedMenuTile(MenuTiles[currentlySelectedMenuTileIndex].TileBelow, true);
+                SetSelectedMenuTile(menuTileGroups.Peek()[currentlySelectedMenuTileIndex].TileBelow, true);
             }
         }
 
@@ -156,18 +164,18 @@ namespace SurvivalHorrorFramework
         // If the specified menu tile belongs to the MenuTiles list updates the currently selected menu tile index so that the specified tile is the only one with the 'Selected' status.
         private void SetSelectedMenuTile(MenuTile menuTile, bool playSoundEffect = false)
         {
-            for (int i = 0; i < MenuTiles.Count; ++i)
+            for (int i = 0; i < menuTileGroups.Peek().Count; ++i)
             {
-                if (MenuTiles[i] == menuTile)
+                if (menuTileGroups.Peek()[i] == menuTile)
                 {
-                    MenuTiles[currentlySelectedMenuTileIndex].IsSelected = false;
+                    menuTileGroups.Peek()[currentlySelectedMenuTileIndex].IsSelected = false;
 
-                    MenuTiles[i].IsSelected = true;
+                    menuTileGroups.Peek()[i].IsSelected = true;
                     currentlySelectedMenuTileIndex = i;
 
                     if (playSoundEffect)
                     {
-                        audioSourceComponent.PlayOneShot(ChangeSelectedSound);
+                        audioSourceComponent.PlayOneShot(ChangeSelectedSound);                        
                     }
 
                     break;

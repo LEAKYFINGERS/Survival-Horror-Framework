@@ -54,6 +54,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Assets\Third-Party\LeakyFingers Utility Package\Standard Assets (Modified)\FirstPersonController.cs" />
+    <Compile Include="Assets\Scripts\MenuTile.cs" />
     <Compile Include="Assets\Third-Party\LeakyFingers Utility Package\Shaders\Post-Processing\MaskedColorPostProcessEffect.cs" />
     <Compile Include="Assets\Third-Party\LeakyFingers Utility Package\Shake.cs" />
     <Compile Include="Assets\Third-Party\LeakyFingers Utility Package\Standard Assets (Modified)\CurveControlledBob.cs" />
@@ -92,7 +93,7 @@
     <Compile Include="Assets\Third-Party\LeakyFingers Utility Package\Standard Assets (Modified)\FOVKick.cs" />
     <Compile Include="Assets\Third-Party\LeakyFingers Utility Package\ToggleableLight.cs" />
     <Compile Include="Assets\Third-Party\LeakyFingers Utility Package\Shaders\Post-Processing\ColorTintPostProcessEffect.cs" />
-    <Compile Include="Assets\Scripts\MenuTile.cs" />
+    <Compile Include="Assets\Scripts\ParentMenuTile.cs" />
   </ItemGroup>
   <ItemGroup>
      <None Include="Assets\Third-Party\Retro 3D Shader Pack for Unity\Shaders\CG_Includes\RetroFlatLit.cginc" />
