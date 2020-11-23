@@ -71,6 +71,7 @@
     <Compile Include="Assets\Third-Party\LeakyFingers Utility Package\ScenePause.cs" />
     <Compile Include="Assets\Third-Party\LeakyFingers Utility Package\Standard Assets (Modified)\MouseLook.cs" />
     <Compile Include="Assets\Third-Party\LeakyFingers Utility Package\LightFlicker.cs" />
+    <Compile Include="Assets\Scripts\ExitMenuTile.cs" />
     <Compile Include="Assets\Scripts\GameMenu.cs" />
     <Compile Include="Assets\Scripts\FixedCameraHandler.cs" />
     <Compile Include="Assets\Third-Party\LeakyFingers Utility Package\EquippableObject.cs" />
@@ -94,7 +95,9 @@
     <Compile Include="Assets\Third-Party\LeakyFingers Utility Package\Standard Assets (Modified)\FOVKick.cs" />
     <Compile Include="Assets\Third-Party\LeakyFingers Utility Package\ToggleableLight.cs" />
     <Compile Include="Assets\Third-Party\LeakyFingers Utility Package\Shaders\Post-Processing\ColorTintPostProcessEffect.cs" />
-    <Compile Include="Assets\Scripts\ExitMenuTile.cs" />
+    <Compile Include="Assets\Scripts\InteractiveObject.cs" />
+    <Compile Include="Assets\Scripts\TestInteractiveBox.cs" />
+    <Compile Include="Assets\Scripts\PlayerInteractionTrigger.cs" />
   </ItemGroup>
   <ItemGroup>
      <None Include="Assets\Third-Party\Retro 3D Shader Pack for Unity\Shaders\CG_Includes\RetroFlatLit.cginc" />

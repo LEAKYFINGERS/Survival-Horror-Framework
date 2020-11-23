@@ -1,0 +1,20 @@
+﻿////////////////////////////////////////
+// Author:              LEAKYFINGERS
+// Date created:        23.11.20
+// Date last edited:    23.11.20
+////////////////////////////////////////
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+namespace SurvivalHorrorFramework
+{
+    public class TestInteractiveBox : InteractiveObject
+    {
+        public override void Interact()
+        {
+            GetComponent<Renderer>().material.color = new Color(Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f));
+            Debug.Log("Interacted with test box.");
+        }
+    }
+}

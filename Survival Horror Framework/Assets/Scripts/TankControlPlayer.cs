@@ -1,7 +1,7 @@
 ﻿////////////////////////////////////////
 // Author:              LEAKYFINGERS
 // Date created:        25.10.20
-// Date last edited:    11.11.20
+// Date last edited:    23.11.20
 ////////////////////////////////////////
 using System.Collections;
 using System.Collections.Generic;
@@ -15,6 +15,7 @@ namespace SurvivalHorrorFramework
     [RequireComponent(typeof(CharacterController))]
     public class TankControlPlayer : MonoBehaviour
     {
+        public PlayerInteractionTrigger InteractionTrigger; // The trigger collider used to determine which interactive objects within the scene are currently within reach of the player.
         public float WalkSpeed = 2.0f; // The movement speed of the player in units-per-second when walking forwards.
         public float RetreatSpeed = 1.5f; // The movement speed of the player in units-per-second when walking backwards.
         public float RunSpeed = 4.0f; // The movement speed of the player in units-per-second when running forwards - cannot run backwards.
@@ -26,6 +27,7 @@ namespace SurvivalHorrorFramework
         private Animator animatorComponent;
         private CharacterController characterControllerComponent;
         private bool isPaused;
+        private bool wasUseInputDownDuringPreviousUpdate;
 
         private void Awake()
         {
@@ -37,8 +39,27 @@ namespace SurvivalHorrorFramework
         {
             if (!isPaused)
             {
+                UpdateInteraction();
                 UpdateMovement();
                 UpdateAnimation();
+            }
+        }
+
+        private void LateUpdate()
+        {
+            wasUseInputDownDuringPreviousUpdate = Input.GetAxis("Use") == 1.0f;
+        }
+
+        private void UpdateInteraction()
+        {
+            // If the 'Use' input has been pressed, activates any interactive object which is within the bounds of the trigger and closest to the player.
+            if(Input.GetAxis("Use") == 1.0f && !wasUseInputDownDuringPreviousUpdate)
+            {
+                InteractiveObject interactiveObjectInRange = InteractionTrigger.GetClosestInteractiveObjectInsideBounds(transform.position);
+                if(interactiveObjectInRange != null)
+                {
+                    interactiveObjectInRange.Interact();
+                }
             }
         }
 
