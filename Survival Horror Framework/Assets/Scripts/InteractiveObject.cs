@@ -14,5 +14,18 @@ namespace SurvivalHorrorFramework
     public abstract class InteractiveObject : MonoBehaviour
     {
         public abstract void Interact();
+
+
+        protected bool isPaused;
+
+        protected void Pause()
+        {
+            isPaused = true;
+        }
+
+        protected void Unpause()
+        {
+            isPaused = false;
+        }
     }
 }

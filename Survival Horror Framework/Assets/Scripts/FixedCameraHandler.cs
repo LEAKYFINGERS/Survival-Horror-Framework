@@ -1,7 +1,7 @@
 ﻿////////////////////////////////////////
 // Author:              LEAKYFINGERS
 // Date created:        29.10.20
-// Date last edited:    16.11.20
+// Date last edited:    24.11.20
 ////////////////////////////////////////
 using System.Collections;
 using System.Collections.Generic;
@@ -12,10 +12,11 @@ namespace SurvivalHorrorFramework
     // The script used to handle the activation and deactivation of all the FixedCamera instances within a room.
     public class FixedCameraHandler : MonoBehaviour
     {
+        public Canvas[] Canvases; // The canvases used to display the in-game menus, dialog, etc. to be automatically positioned in front of the currently active fixed camera.
         public FixedCamera[] FixedCameras;
         public PauseHandler ScenePauseHandler;
         public float ScenePauseOnCameraChangeDuration = 0.25f;
-        public GameMenu GameMenuCanvas; // The canvas used to display the in-game menu - because it may exist in world space for any post-processing effects to be applied the FixedCameraHandler automatically positions it in front of the currently active fixed camera.
+        public float CanvasForwardOffsetFromCamera = 0.31f; // The offset value used to position the each of the canvases in front of the active camera.   
 
 
         private List<FixedCamera> fixedCamerasWithPlayerInActivationTriggerThisFrame; // A list of the fixed cameras which contain an object tagged "Player" within any of their FixedCameraActivationTriggers during the current frame.
@@ -173,10 +174,13 @@ namespace SurvivalHorrorFramework
                 camera.CameraComponentsAreActive = (camera == activeCamera);
             }
 
-            // Parents and positions the game menu in front of the active camera.
-            GameMenuCanvas.transform.SetParent(activeCamera.transform);
-            GameMenuCanvas.transform.localPosition = Vector3.forward * GameMenuCanvas.ForwardOffsetFromCamera;
-            GameMenuCanvas.transform.localRotation = Quaternion.identity;
+            // Parents and positions each canvas in front of the active camera.
+            foreach (Canvas canvas in Canvases)
+            {
+                canvas.transform.SetParent(activeCamera.transform);
+                canvas.transform.localPosition = Vector3.forward * CanvasForwardOffsetFromCamera;
+                canvas.transform.localRotation = Quaternion.identity;
+            }
         }
     }
 }

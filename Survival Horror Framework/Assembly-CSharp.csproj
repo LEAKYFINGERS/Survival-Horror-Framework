@@ -56,6 +56,7 @@
     <Compile Include="Assets\Third-Party\LeakyFingers Utility Package\Standard Assets (Modified)\FirstPersonController.cs" />
     <Compile Include="Assets\Scripts\MenuTile.cs" />
     <Compile Include="Assets\Third-Party\LeakyFingers Utility Package\Shaders\Post-Processing\MaskedColorPostProcessEffect.cs" />
+    <Compile Include="Assets\Scripts\InteractiveObject.cs" />
     <Compile Include="Assets\Third-Party\LeakyFingers Utility Package\Shake.cs" />
     <Compile Include="Assets\Third-Party\LeakyFingers Utility Package\Standard Assets (Modified)\CurveControlledBob.cs" />
     <Compile Include="Assets\Third-Party\LeakyFingers Utility Package\Scriptable Objects\Dialog.cs" />
@@ -76,11 +77,13 @@
     <Compile Include="Assets\Scripts\FixedCameraHandler.cs" />
     <Compile Include="Assets\Third-Party\LeakyFingers Utility Package\EquippableObject.cs" />
     <Compile Include="Assets\Third-Party\Retro 3D Shader Pack for Unity\Example Scene\Scripts\ExampleSceneCamera.cs" />
+    <Compile Include="Assets\Scripts\TestInteractiveBox.cs" />
     <Compile Include="Assets\Third-Party\Retro 3D Shader Pack for Unity\Shaders\Post-Processing\RetroPostProcessEffect.cs" />
     <Compile Include="Assets\Third-Party\LeakyFingers Utility Package\InteractiveObject.cs" />
     <Compile Include="Assets\Third-Party\LeakyFingers Utility Package\Shaders\Post-Processing\MaskedTexturePostProcessEffect.cs" />
     <Compile Include="Assets\Third-Party\LeakyFingers Utility Package\ExaminableObject.cs" />
     <Compile Include="Assets\Scripts\PauseHandler.cs" />
+    <Compile Include="Assets\Scripts\PlayerInteractionTrigger.cs" />
     <Compile Include="Assets\Third-Party\LeakyFingers Utility Package\Standard Assets (Modified)\LerpControlledBob.cs" />
     <Compile Include="Assets\Third-Party\LeakyFingers Utility Package\EquippableObjectsManager.cs" />
     <Compile Include="Assets\Scripts\FixedCameraActivationTrigger.cs" />
@@ -95,32 +98,51 @@
     <Compile Include="Assets\Third-Party\LeakyFingers Utility Package\Standard Assets (Modified)\FOVKick.cs" />
     <Compile Include="Assets\Third-Party\LeakyFingers Utility Package\ToggleableLight.cs" />
     <Compile Include="Assets\Third-Party\LeakyFingers Utility Package\Shaders\Post-Processing\ColorTintPostProcessEffect.cs" />
-    <Compile Include="Assets\Scripts\InteractiveObject.cs" />
-    <Compile Include="Assets\Scripts\TestInteractiveBox.cs" />
-    <Compile Include="Assets\Scripts\PlayerInteractionTrigger.cs" />
+    <Compile Include="Assets\Scripts\DialogDisplay.cs" />
   </ItemGroup>
   <ItemGroup>
      <None Include="Assets\Third-Party\Retro 3D Shader Pack for Unity\Shaders\CG_Includes\RetroFlatLit.cginc" />
+     <None Include="Assets\Third-Party\TextMesh Pro\Shaders\TMPro.cginc" />
+     <None Include="Assets\Third-Party\TextMesh Pro\Shaders\TMP_SDF-Mobile Overlay.shader" />
      <None Include="Assets\Third-Party\Retro 3D Shader Pack for Unity\Shaders\RetroVertexLit.shader" />
      <None Include="Assets\Third-Party\Retro 3D Shader Pack for Unity\Shaders\CG_Includes\RetroUnityLit.cginc" />
+     <None Include="Assets\Third-Party\TextMesh Pro\Shaders\TMP_Bitmap.shader" />
      <None Include="Assets\Third-Party\Kevin Iglesias\3DCharacterDummy\Readme.txt" />
+     <None Include="Assets\Third-Party\TextMesh Pro\Shaders\TMPro_Mobile.cginc" />
      <None Include="Assets\Third-Party\LeakyFingers Utility Package\Shaders\Post-Processing\Resources\MaskedTexturePostProcessShader.shader" />
      <None Include="Assets\Third-Party\Retro 3D Shader Pack for Unity\Shaders\Sprite Shaders\RetroSpriteUnlit.shader" />
+     <None Include="Assets\Third-Party\TextMesh Pro\Shaders\TMP_SDF SSD.shader" />
      <None Include="Assets\Third-Party\Retro 3D Shader Pack for Unity\Shaders\RetroFlatLitTransparent.shader" />
      <None Include="Assets\Third-Party\Retro 3D Shader Pack for Unity\Shaders\RetroUnityLitTransparent.shader" />
      <None Include="Assets\Third-Party\Retro 3D Shader Pack for Unity\README.txt" />
      <None Include="Assets\Third-Party\Retro 3D Shader Pack for Unity\Shaders\RetroUnlitTransparent.shader" />
      <None Include="Assets\Third-Party\Retro 3D Shader Pack for Unity\Shaders\Sprite Shaders\RetroSpriteLit.shader" />
+     <None Include="Assets\Third-Party\TextMesh Pro\Shaders\TMP_SDF-Surface-Mobile.shader" />
      <None Include="Assets\Third-Party\Retro 3D Shader Pack for Unity\Shaders\RetroUnlit.shader" />
+     <None Include="Assets\Third-Party\TextMesh Pro\Shaders\TMP_SDF-Surface.shader" />
+     <None Include="Assets\Third-Party\TextMesh Pro\Sprites\EmojiOne Attribution.txt" />
+     <None Include="Assets\Third-Party\TextMesh Pro\Shaders\TMP_Bitmap-Custom-Atlas.shader" />
+     <None Include="Assets\Third-Party\TextMesh Pro\Shaders\TMP_SDF.shader" />
      <None Include="Assets\Third-Party\Retro 3D Shader Pack for Unity\Shaders\RetroFlatLit.shader" />
+     <None Include="Assets\Third-Party\TextMesh Pro\Shaders\TMP_SDF-Mobile SSD.shader" />
+     <None Include="Assets\Third-Party\TextMesh Pro\Resources\LineBreaking Leading Characters.txt" />
+     <None Include="Assets\Third-Party\TextMesh Pro\Shaders\TMPro_Properties.cginc" />
+     <None Include="Assets\Third-Party\TextMesh Pro\Shaders\TMPro_Surface.cginc" />
      <None Include="Assets\Third-Party\LeakyFingers Utility Package\Shaders\Post-Processing\Resources\ColorTintPostProcessShader.shader" />
+     <None Include="Assets\Third-Party\TextMesh Pro\Resources\LineBreaking Following Characters.txt" />
      <None Include="Assets\Third-Party\Retro 3D Shader Pack for Unity\Shaders\CG_Includes\RetroUnlit.cginc" />
      <None Include="Assets\Third-Party\Retro 3D Shader Pack for Unity\Shaders\RetroUnityLit.shader" />
      <None Include="Assets\Third-Party\LeakyFingers Utility Package\Shaders\Post-Processing\Resources\MaskedColorPostProcessShader.shader" />
      <None Include="Assets\Third-Party\Retro 3D Shader Pack for Unity\Shaders\Post-Processing\Resources\RetroPostProcess.shader" />
+     <None Include="Assets\Third-Party\TextMesh Pro\Shaders\TMP_SDF-Mobile Masking.shader" />
      <None Include="Assets\Third-Party\Retro 3D Shader Pack for Unity\Shaders\Post-Processing\Resources\Resources File Explanation.txt" />
      <None Include="Assets\Third-Party\Retro 3D Shader Pack for Unity\Shaders\RetroVertexLitTransparent.shader" />
      <None Include="Assets\Third-Party\Retro 3D Shader Pack for Unity\Shaders\CG_Includes\RetroVertexLit.cginc" />
+     <None Include="Assets\Third-Party\TextMesh Pro\Shaders\TMP_SDF Overlay.shader" />
+     <None Include="Assets\Third-Party\TextMesh Pro\Shaders\TMP_Bitmap-Mobile.shader" />
+     <None Include="Assets\Third-Party\TextMesh Pro\Fonts\LiberationSans - OFL.txt" />
+     <None Include="Assets\Third-Party\TextMesh Pro\Shaders\TMP_SDF-Mobile.shader" />
+     <None Include="Assets\Third-Party\TextMesh Pro\Shaders\TMP_Sprite.shader" />
     <Reference Include="UnityEngine">
       <HintPath>C:\Program Files\Unity\Hub\Editor\2020.1.10f1\Editor\Data\Managed\UnityEngine\UnityEngine.dll</HintPath>
     </Reference>

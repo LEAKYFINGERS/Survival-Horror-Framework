@@ -21,8 +21,7 @@ namespace SurvivalHorrorFramework
         public Image ActivationFadeImage; // The UI image (usually solid black) which fades in and out each time the menu transitions between activated and deactivated.
         public Image BackgroundImage;
         public List<MenuTile> ParentMenuTileGroup; // The initial group of menu tiles which are pushed onto the stack of menu tile groups and thus form the first interactive 'layer' of the menu.
-        public PauseHandler ScenePauseHandler;
-        public float ForwardOffsetFromCamera = 0.31f; // The offset value used to position the menu canvas in front of the active camera.   
+        public PauseHandler ScenePauseHandler;        
         public float ActivationFadeDuration = 0.25f;
 
         // Activates or deactivates the menu if the scene isn't already currently paused (e.g. for camera transition stutter effect).
