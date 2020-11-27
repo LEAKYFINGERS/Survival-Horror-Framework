@@ -12,6 +12,7 @@ namespace SurvivalHorrorFramework
     public class TestInteractiveBox : InteractiveObject
     {
         public DialogDisplay SceneDialogDisplay;
+        public Dialog InteractDialog;
 
         public override void Interact()
         {
@@ -20,7 +21,7 @@ namespace SurvivalHorrorFramework
                 GetComponent<Renderer>().material.color = new Color(Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f));
                 Debug.Log("Interacted with test box.");
 
-                SceneDialogDisplay.PauseSceneAndDisplayDialog();
+                SceneDialogDisplay.PauseSceneAndDisplayDialog(InteractDialog);
             }
         }        
     }

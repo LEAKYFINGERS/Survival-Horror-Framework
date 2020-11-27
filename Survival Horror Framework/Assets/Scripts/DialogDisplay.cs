@@ -1,7 +1,8 @@
 ﻿////////////////////////////////////////
 // Author:              LEAKYFINGERS
 // Date created:        24.11.20
-// Date last edited:    24.11.20
+// Date last edited:    27.11.20
+// Reference/s:         https://repo.ijs.si/eHeritage/3DInstitute/blob/master/Assets/TextMesh%20Pro/Examples/Scripts/VertexColorCycler.cs
 ////////////////////////////////////////
 using System.Collections;
 using System.Collections.Generic;
@@ -16,91 +17,66 @@ namespace SurvivalHorrorFramework
     public class DialogDisplay : MonoBehaviour
     {
         public PauseHandler ScenePauseHandler;
-        public TextMeshProUGUI UIText; 
+        public TextMeshProUGUI UIText;
 
         public bool IsDialogBeingDisplayed
         {
             get { return isDisplayDialogCoroutineRunning; }
         }
 
-        public void PauseSceneAndDisplayDialog()
-        {            
-            if(!isDisplayDialogCoroutineRunning)
+        public void PauseSceneAndDisplayDialog(Dialog dialog)
+        {
+            if (!isDisplayDialogCoroutineRunning)
             {
-                StartCoroutine("PauseSceneAndDisplayDialogCoroutine");
+                StartCoroutine("PauseSceneAndDisplayDialogCoroutine", dialog);
             }
         }
 
 
-        //private bool wasUseInputDownDuringPreviousUpdate;
-        //private bool wasRunInputDownDuringPreviousUpdate;
         private bool isDisplayDialogCoroutineRunning;
 
-        private IEnumerator PauseSceneAndDisplayDialogCoroutine()
+        private IEnumerator PauseSceneAndDisplayDialogCoroutine(Dialog dialog)
         {
             isDisplayDialogCoroutineRunning = true;
             ScenePauseHandler.PauseScene();
             UIText.enabled = true;
 
-            bool useInputInputReleased = false;
-
-            TMP_CharacterInfo[] characters = UIText.GetTextInfo(UIText.text).characterInfo;
-            for (int i = 0; i < UIText.GetTextInfo(UIText.text).characterCount; ++i)
+            UIText.text = dialog.DisplayedText.Trim(); // Trims the text to remove any whitespace at the beginning or end.
+            UIText.ForceMeshUpdate(); // Updates the mesh of the UIText so that all of the textInfo values will be accurate.
+            TMP_TextInfo textInfo = UIText.textInfo;
+                                    
+            // If the character reveal speed is greater than zero causes the characters to appear one at a time, else causes them all to appear instantly.
+            if (dialog.DefaultCharacterRevealInterval > 0.0f)
             {
-                characters[i].isVisible = false;
+                SetAllUITextCharactersTransparency(textInfo, 0); // Sets all the characters to initially be invisible.
+
+                // Causes the characters to 'appear' one at a time by setting the alpha value of each subsequent character to 'opaque' each time the loop is iterated.
+                int appearingCharacterIndex = 0;
+                while (appearingCharacterIndex < textInfo.characterCount)
+                {
+                    Color32 opaqueColor = new Color32(textInfo.characterInfo[appearingCharacterIndex].color.r, textInfo.characterInfo[appearingCharacterIndex].color.g, textInfo.characterInfo[appearingCharacterIndex].color.b, 255);
+                    SetUITextCharacterColor(textInfo, opaqueColor, appearingCharacterIndex);
+                    appearingCharacterIndex++;
+
+                    yield return new WaitForSecondsRealtime(Input.GetAxis("Use") == 1.0f || Input.GetAxis("Run") == 1.0f ? dialog.FastCharacterRevealInterval : dialog.DefaultCharacterRevealInterval); // Adjusts the speed of the character reveal according to whether any inputs are being held
+                }
+                SetAllUITextCharactersTransparency(textInfo, 255);
             }
-            UIText.ForceMeshUpdate();
 
-            //TMP_CharacterInfo[] characters = UIText.GetTextInfo(UIText.text).characterInfo;
-            //for (int i = 0; i < UIText.GetTextInfo(UIText.text).characterCount; ++i)
-            //{
-            //    int meshIndex = UIText.textInfo.characterInfo[i].materialReferenceIndex;
-            //    int vertexIndex = UIText.textInfo.characterInfo[i].vertexIndex;
-            //    Color32[] vertexColors = UIText.textInfo.meshInfo[meshIndex].colors32;
-            //    vertexColors[vertexIndex + 0] = Color.clear;
-            //    vertexColors[vertexIndex + 1] = Color.clear; 
-            //    vertexColors[vertexIndex + 2] = Color.clear; 
-            //    vertexColors[vertexIndex + 3] = Color.clear; 
-            //}
-            //UIText.ForceMeshUpdate();
-
-
-            //for (int i = 0; i < myText.textInfo.wordCount; i++)
-            //{
-            //    TMP_WordInfo wInfo = myText.textInfo.wordInfo;
-            //    for (int j = 0; j < wInfo.characterCount; j++)
-            //    {
-            //        yield return StartCoroutine(waitWithDuration(.2f));
-            //        int characterIndex = wInfo.firstCharacterIndex + j;
-            //        int meshIndex = myText.textInfo.characterInfo[characterIndex].materialReferenceIndex;
-            //        int vertexIndex = myText.textInfo.characterInfo[characterIndex].vertexIndex;
-            //        Color32[] vertexColors = myText.textInfo.meshInfo[meshIndex].colors32;
-            //        vertexColors[vertexIndex + 0] = BLUE;
-            //        vertexColors[vertexIndex + 1] = BLUE;
-            //        vertexColors[vertexIndex + 2] = BLUE;
-            //        vertexColors[vertexIndex + 3] = BLUE;
-
-            //    }
-            //    myText.UpdateVertexData(TMP_VertexDataUpdateFlags.All);
-            //}
-
-
-
-
+            // Pauses to wait for the player to press either the 'Use' or 'Run' inputs before the dialog text disappears and the scene unpauses. 
+            bool continueInputReleased = false;            
             while (true)
             {
-                if((Input.GetAxis("Use") == 1.0f && useInputInputReleased ))// || (Input.GetAxis("Run") == 1.0f && !wasRunInputDownDuringPreviousUpdate))
+                if ((Input.GetAxis("Use") == 1.0f || Input.GetAxis("Run") == 1.0f) && continueInputReleased)
                 {
                     break;
                 }
                 else
                 {
-                    if(Input.GetAxis("Use") == 0.0f)
+                    if (Input.GetAxis("Use") == 0.0f && Input.GetAxis("Run") == 0.0f)
                     {
-                        useInputInputReleased = true;
+                        continueInputReleased = true;
                     }
-
-                    Debug.Log(UIText.GetTextInfo(UIText.text).characterInfo[0].color);
 
                     yield return null;
                 }
@@ -116,19 +92,37 @@ namespace SurvivalHorrorFramework
             UIText.enabled = false;
         }
 
-        //private void LateUpdate()
-        //{
-        //    wasUseInputDownDuringPreviousUpdate = Input.GetAxis("Use") == 1.0f;
-        //    //wasRunInputDownDuringPreviousUpdate = Input.GetAxis("Run") == 1.0f;
+        // Sets the alpha of all the characters currently displayed by the UIText to the specified value while preserving their RGB values.
+        private void SetAllUITextCharactersTransparency(TMP_TextInfo textInfo, byte transparencyValue)
+        {
+            for (int i = 0; i < textInfo.characterCount; ++i)
+            {
+                Color32 transparentColor = new Color32(textInfo.characterInfo[i].color.r, textInfo.characterInfo[i].color.g, textInfo.characterInfo[i].color.b, transparencyValue);
+                SetUITextCharacterColor(textInfo, transparentColor, i);
+            }
+        }
 
-        //    if (isDisplayDialogCoroutineRunning && Input.GetAxis("Use") == 0.0f)
-        //    {
-        //        hasUseInputBeenReleasedSinceDialogDisplayCoroutineStarted = true;
-        //    }
-        //    else
-        //    {
-        //        hasUseInputBeenReleasedSinceDialogDisplayCoroutineStarted = false;
-        //    }
-        //}
+        // Sets the color of the specified character currently displayed by the UIText.
+        private void SetUITextCharacterColor(TMP_TextInfo textInfo, Color32 newColor, int characterIndex)
+        {
+            if (characterIndex < 0 || characterIndex > textInfo.characterCount)
+            {
+                throw new System.Exception("The characterIndex parameter is outside the range of any existing characters within the UIText.");
+            }
+
+            int materialIndex = textInfo.characterInfo[characterIndex].materialReferenceIndex; // The material of the index used by the current character.            
+            Color32[] newVertexColors = textInfo.meshInfo[materialIndex].colors32; // The 4 vertex colors of the mesh used by this text element (character or sprite).            
+            int vertexIndex = textInfo.characterInfo[characterIndex].vertexIndex; // The index of the first vertex used by this text element.
+
+            if (textInfo.characterInfo[characterIndex].isVisible)
+            {
+                newVertexColors[vertexIndex + 0] = newColor;
+                newVertexColors[vertexIndex + 1] = newColor;
+                newVertexColors[vertexIndex + 2] = newColor;
+                newVertexColors[vertexIndex + 3] = newColor;
+
+                UIText.UpdateVertexData(TMP_VertexDataUpdateFlags.Colors32); // Pushes all updated vertex data to the appropriate meshes when using either the Mesh Renderer or CanvasRenderer.
+            }
+        }
     }
 }

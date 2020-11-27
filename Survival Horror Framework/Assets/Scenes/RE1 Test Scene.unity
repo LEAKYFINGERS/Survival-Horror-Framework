@@ -191,7 +191,7 @@ MonoBehaviour:
     meshQuery:
       layers: 33554440
       maskAndChannels: 8
-    surfaceParameter: 16164
+    surfaceParameter: 16220
     meshQueryIndex: 1
     subMeshQueryIndex: 0
     geometryHashValue: -6890960572739351077
@@ -1603,12 +1603,6 @@ MonoBehaviour:
   m_AfterStackBundles:
   - assemblyQualifiedName: RetroPostProcessEffect, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
-  - assemblyQualifiedName: LeakyfingersUtility.ColorTintPostProcessEffect, Assembly-CSharp,
-      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-  - assemblyQualifiedName: LeakyfingersUtility.MaskedColorPostProcessEffect, Assembly-CSharp,
-      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-  - assemblyQualifiedName: LeakyfingersUtility.MaskedTexturePostProcessEffect, Assembly-CSharp,
-      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
 --- !u!1 &138841881
 GameObject:
   m_ObjectHideFlags: 0
@@ -2860,12 +2854,6 @@ MonoBehaviour:
   m_AfterStackBundles:
   - assemblyQualifiedName: RetroPostProcessEffect, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
-  - assemblyQualifiedName: LeakyfingersUtility.ColorTintPostProcessEffect, Assembly-CSharp,
-      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-  - assemblyQualifiedName: LeakyfingersUtility.MaskedColorPostProcessEffect, Assembly-CSharp,
-      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-  - assemblyQualifiedName: LeakyfingersUtility.MaskedTexturePostProcessEffect, Assembly-CSharp,
-      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
 --- !u!1 &225578949
 GameObject:
   m_ObjectHideFlags: 0
@@ -4049,12 +4037,6 @@ MonoBehaviour:
   m_AfterStackBundles:
   - assemblyQualifiedName: RetroPostProcessEffect, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
-  - assemblyQualifiedName: LeakyfingersUtility.ColorTintPostProcessEffect, Assembly-CSharp,
-      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-  - assemblyQualifiedName: LeakyfingersUtility.MaskedColorPostProcessEffect, Assembly-CSharp,
-      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-  - assemblyQualifiedName: LeakyfingersUtility.MaskedTexturePostProcessEffect, Assembly-CSharp,
-      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
 --- !u!1 &322460896
 GameObject:
   m_ObjectHideFlags: 0
@@ -5368,12 +5350,6 @@ MonoBehaviour:
   m_AfterStackBundles:
   - assemblyQualifiedName: RetroPostProcessEffect, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
-  - assemblyQualifiedName: LeakyfingersUtility.ColorTintPostProcessEffect, Assembly-CSharp,
-      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-  - assemblyQualifiedName: LeakyfingersUtility.MaskedColorPostProcessEffect, Assembly-CSharp,
-      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-  - assemblyQualifiedName: LeakyfingersUtility.MaskedTexturePostProcessEffect, Assembly-CSharp,
-      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
 --- !u!1 &384854642
 GameObject:
   m_ObjectHideFlags: 0
@@ -7950,12 +7926,6 @@ MonoBehaviour:
   m_AfterStackBundles:
   - assemblyQualifiedName: RetroPostProcessEffect, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
-  - assemblyQualifiedName: LeakyfingersUtility.ColorTintPostProcessEffect, Assembly-CSharp,
-      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-  - assemblyQualifiedName: LeakyfingersUtility.MaskedColorPostProcessEffect, Assembly-CSharp,
-      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-  - assemblyQualifiedName: LeakyfingersUtility.MaskedTexturePostProcessEffect, Assembly-CSharp,
-      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
 --- !u!1 &546708501
 GameObject:
   m_ObjectHideFlags: 0
@@ -8585,7 +8555,7 @@ MonoBehaviour:
     meshQuery:
       layers: 16777223
       maskAndChannels: 234881031
-    surfaceParameter: 16178
+    surfaceParameter: 16238
     meshQueryIndex: 4
     subMeshQueryIndex: 0
     geometryHashValue: 4572443650640064070
@@ -9730,6 +9700,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SceneDialogDisplay: {fileID: 35552318}
+  InteractDialog: {fileID: 11400000, guid: 2397f36ae8d6894498cd2193ead26369, type: 2}
 --- !u!54 &695670723
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -10218,7 +10189,7 @@ MonoBehaviour:
     meshQuery:
       layers: 16777223
       maskAndChannels: 234881031
-    surfaceParameter: 16170
+    surfaceParameter: 16230
     meshQueryIndex: 8
     subMeshQueryIndex: 0
     geometryHashValue: -196901665010600081
@@ -11335,7 +11306,7 @@ MonoBehaviour:
     meshQuery:
       layers: 33554440
       maskAndChannels: 8
-    surfaceParameter: 16164
+    surfaceParameter: 16220
     meshQueryIndex: 1
     subMeshQueryIndex: 0
     geometryHashValue: -6890960572739351077
@@ -12338,7 +12309,7 @@ MonoBehaviour:
     meshQuery:
       layers: 16777223
       maskAndChannels: 234881031
-    surfaceParameter: 16168
+    surfaceParameter: 16228
     meshQueryIndex: 0
     subMeshQueryIndex: 0
     geometryHashValue: -2421411424142816264
@@ -12849,12 +12820,6 @@ MonoBehaviour:
   m_AfterStackBundles:
   - assemblyQualifiedName: RetroPostProcessEffect, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
-  - assemblyQualifiedName: LeakyfingersUtility.ColorTintPostProcessEffect, Assembly-CSharp,
-      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-  - assemblyQualifiedName: LeakyfingersUtility.MaskedColorPostProcessEffect, Assembly-CSharp,
-      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-  - assemblyQualifiedName: LeakyfingersUtility.MaskedTexturePostProcessEffect, Assembly-CSharp,
-      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
@@ -13019,12 +12984,6 @@ MonoBehaviour:
   m_AfterStackBundles:
   - assemblyQualifiedName: RetroPostProcessEffect, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
-  - assemblyQualifiedName: LeakyfingersUtility.ColorTintPostProcessEffect, Assembly-CSharp,
-      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-  - assemblyQualifiedName: LeakyfingersUtility.MaskedColorPostProcessEffect, Assembly-CSharp,
-      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-  - assemblyQualifiedName: LeakyfingersUtility.MaskedTexturePostProcessEffect, Assembly-CSharp,
-      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
 --- !u!1 &971487921
 GameObject:
   m_ObjectHideFlags: 16
@@ -13128,7 +13087,7 @@ MonoBehaviour:
     meshQuery:
       layers: 16777223
       maskAndChannels: 234881031
-    surfaceParameter: 16180
+    surfaceParameter: 16240
     meshQueryIndex: 5
     subMeshQueryIndex: 0
     geometryHashValue: -3290648969674919958
@@ -13448,6 +13407,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SceneDialogDisplay: {fileID: 35552318}
+  InteractDialog: {fileID: 11400000, guid: 2397f36ae8d6894498cd2193ead26369, type: 2}
 --- !u!65 &975367178
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -15496,12 +15456,6 @@ MonoBehaviour:
   m_AfterStackBundles:
   - assemblyQualifiedName: RetroPostProcessEffect, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
-  - assemblyQualifiedName: LeakyfingersUtility.ColorTintPostProcessEffect, Assembly-CSharp,
-      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-  - assemblyQualifiedName: LeakyfingersUtility.MaskedColorPostProcessEffect, Assembly-CSharp,
-      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-  - assemblyQualifiedName: LeakyfingersUtility.MaskedTexturePostProcessEffect, Assembly-CSharp,
-      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
 --- !u!1 &1149160799
 GameObject:
   m_ObjectHideFlags: 0
@@ -15668,12 +15622,6 @@ MonoBehaviour:
   m_AfterStackBundles:
   - assemblyQualifiedName: RetroPostProcessEffect, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
-  - assemblyQualifiedName: LeakyfingersUtility.ColorTintPostProcessEffect, Assembly-CSharp,
-      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-  - assemblyQualifiedName: LeakyfingersUtility.MaskedColorPostProcessEffect, Assembly-CSharp,
-      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-  - assemblyQualifiedName: LeakyfingersUtility.MaskedTexturePostProcessEffect, Assembly-CSharp,
-      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
 --- !u!43 &1158265638
 Mesh:
   m_ObjectHideFlags: 0
@@ -21890,7 +21838,7 @@ MonoBehaviour:
     meshQuery:
       layers: 16777223
       maskAndChannels: 234881031
-    surfaceParameter: 16190
+    surfaceParameter: 16250
     meshQueryIndex: 9
     subMeshQueryIndex: 0
     geometryHashValue: 9122624310680011044
@@ -23107,12 +23055,6 @@ MonoBehaviour:
   m_AfterStackBundles:
   - assemblyQualifiedName: RetroPostProcessEffect, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
-  - assemblyQualifiedName: LeakyfingersUtility.ColorTintPostProcessEffect, Assembly-CSharp,
-      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-  - assemblyQualifiedName: LeakyfingersUtility.MaskedColorPostProcessEffect, Assembly-CSharp,
-      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-  - assemblyQualifiedName: LeakyfingersUtility.MaskedTexturePostProcessEffect, Assembly-CSharp,
-      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
 --- !u!1001 &1894216218
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -24683,12 +24625,6 @@ MonoBehaviour:
   m_AfterStackBundles:
   - assemblyQualifiedName: RetroPostProcessEffect, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
-  - assemblyQualifiedName: LeakyfingersUtility.ColorTintPostProcessEffect, Assembly-CSharp,
-      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-  - assemblyQualifiedName: LeakyfingersUtility.MaskedColorPostProcessEffect, Assembly-CSharp,
-      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-  - assemblyQualifiedName: LeakyfingersUtility.MaskedTexturePostProcessEffect, Assembly-CSharp,
-      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
 --- !u!1 &1993838897
 GameObject:
   m_ObjectHideFlags: 16
@@ -24792,7 +24728,7 @@ MonoBehaviour:
     meshQuery:
       layers: 16777223
       maskAndChannels: 234881031
-    surfaceParameter: 16172
+    surfaceParameter: 16232
     meshQueryIndex: 7
     subMeshQueryIndex: 0
     geometryHashValue: -4410096879912048731
@@ -26551,12 +26487,6 @@ MonoBehaviour:
   m_AfterStackBundles:
   - assemblyQualifiedName: RetroPostProcessEffect, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
-  - assemblyQualifiedName: LeakyfingersUtility.ColorTintPostProcessEffect, Assembly-CSharp,
-      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-  - assemblyQualifiedName: LeakyfingersUtility.MaskedColorPostProcessEffect, Assembly-CSharp,
-      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-  - assemblyQualifiedName: LeakyfingersUtility.MaskedTexturePostProcessEffect, Assembly-CSharp,
-      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
 --- !u!43 &2080501041
 Mesh:
   m_ObjectHideFlags: 16
