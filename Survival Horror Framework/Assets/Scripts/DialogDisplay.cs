@@ -1,7 +1,7 @@
 ﻿////////////////////////////////////////
 // Author:              LEAKYFINGERS
 // Date created:        24.11.20
-// Date last edited:    27.11.20
+// Date last edited:    28.11.20
 // Reference/s:         https://repo.ijs.si/eHeritage/3DInstitute/blob/master/Assets/TextMesh%20Pro/Examples/Scripts/VertexColorCycler.cs
 ////////////////////////////////////////
 using System.Collections;
@@ -41,44 +41,49 @@ namespace SurvivalHorrorFramework
             ScenePauseHandler.PauseScene();
             UIText.enabled = true;
 
-            UIText.text = dialog.DisplayedText.Trim(); // Trims the text to remove any whitespace at the beginning or end.
-            UIText.ForceMeshUpdate(); // Updates the mesh of the UIText so that all of the textInfo values will be accurate.
-            TMP_TextInfo textInfo = UIText.textInfo;
-                                    
-            // If the character reveal speed is greater than zero causes the characters to appear one at a time, else causes them all to appear instantly.
-            if (dialog.DefaultCharacterRevealInterval > 0.0f)
+            // Divides the dialog into individual 'snippets' seperated by a tilde character which are each displayed one at a time in sequence.
+            string[] dialogSnippets = dialog.DisplayedText.Split('~'); 
+            foreach (string dialogSnippet in dialogSnippets)
             {
-                SetAllUITextCharactersTransparency(textInfo, 0); // Sets all the characters to initially be invisible.
+                UIText.text = dialogSnippet.Trim(); // Trims the text to remove any whitespace at the beginning or end.
+                UIText.ForceMeshUpdate(); // Updates the mesh of the UIText so that all of the textInfo values will be accurate.
+                TMP_TextInfo textInfo = UIText.textInfo;
 
-                // Causes the characters to 'appear' one at a time by setting the alpha value of each subsequent character to 'opaque' each time the loop is iterated.
-                int appearingCharacterIndex = 0;
-                while (appearingCharacterIndex < textInfo.characterCount)
+                // If the character reveal speed is greater than zero causes the characters to appear one at a time, else causes them all to appear instantly.
+                if (dialog.DefaultCharacterRevealInterval > 0.0f)
                 {
-                    Color32 opaqueColor = new Color32(textInfo.characterInfo[appearingCharacterIndex].color.r, textInfo.characterInfo[appearingCharacterIndex].color.g, textInfo.characterInfo[appearingCharacterIndex].color.b, 255);
-                    SetUITextCharacterColor(textInfo, opaqueColor, appearingCharacterIndex);
-                    appearingCharacterIndex++;
+                    SetAllUITextCharactersTransparency(textInfo, 0); // Sets all the characters to initially be invisible.
 
-                    yield return new WaitForSecondsRealtime(Input.GetAxis("Use") == 1.0f || Input.GetAxis("Run") == 1.0f ? dialog.FastCharacterRevealInterval : dialog.DefaultCharacterRevealInterval); // Adjusts the speed of the character reveal according to whether any inputs are being held
-                }
-                SetAllUITextCharactersTransparency(textInfo, 255);
-            }
-
-            // Pauses to wait for the player to press either the 'Use' or 'Run' inputs before the dialog text disappears and the scene unpauses. 
-            bool continueInputReleased = false;            
-            while (true)
-            {
-                if ((Input.GetAxis("Use") == 1.0f || Input.GetAxis("Run") == 1.0f) && continueInputReleased)
-                {
-                    break;
-                }
-                else
-                {
-                    if (Input.GetAxis("Use") == 0.0f && Input.GetAxis("Run") == 0.0f)
+                    // Causes the characters to 'appear' one at a time by setting the alpha value of each subsequent character to 'opaque' each time the loop is iterated.
+                    int appearingCharacterIndex = 0;
+                    while (appearingCharacterIndex < textInfo.characterCount)
                     {
-                        continueInputReleased = true;
-                    }
+                        Color32 opaqueColor = new Color32(textInfo.characterInfo[appearingCharacterIndex].color.r, textInfo.characterInfo[appearingCharacterIndex].color.g, textInfo.characterInfo[appearingCharacterIndex].color.b, 255);
+                        SetUITextCharacterColor(textInfo, opaqueColor, appearingCharacterIndex);
+                        appearingCharacterIndex++;
 
-                    yield return null;
+                        yield return new WaitForSecondsRealtime(Input.GetAxis("Use") == 1.0f || Input.GetAxis("Run") == 1.0f ? dialog.FastCharacterRevealInterval : dialog.DefaultCharacterRevealInterval); // Adjusts the speed of the character reveal according to whether any inputs are being held
+                    }
+                    SetAllUITextCharactersTransparency(textInfo, 255);
+                }
+
+                // Pauses to wait for the player to press either the 'Use' or 'Run' inputs before the dialog text disappears and the scene unpauses. 
+                bool continueInputReleased = false;
+                while (true)
+                {
+                    if ((Input.GetAxis("Use") == 1.0f || Input.GetAxis("Run") == 1.0f) && continueInputReleased)
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        if (Input.GetAxis("Use") == 0.0f && Input.GetAxis("Run") == 0.0f)
+                        {
+                            continueInputReleased = true;
+                        }
+
+                        yield return null;
+                    }
                 }
             }
 
