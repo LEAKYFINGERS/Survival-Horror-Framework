@@ -73,6 +73,9 @@
     <Compile Include="Assets\Scripts\FootstepFloorTextures.cs" />
     <Compile Include="Assets\Scripts\Dialog.cs" />
     <Compile Include="Assets\Scripts\FixedCamera.cs" />
+    <Compile Include="Assets\Scripts\Shaders\Post-Processing\ColorTintPostProcessEffect.cs" />
+    <Compile Include="Assets\Scripts\ColorTintPostProcessHandler.cs" />
+    <Compile Include="Assets\Scripts\SceneTransitionObject.cs" />
   </ItemGroup>
   <ItemGroup>
      <None Include="Assets\Third-Party\Retro 3D Shader Pack for Unity\Shaders\CG_Includes\RetroFlatLit.cginc" />
@@ -101,6 +104,7 @@
      <None Include="Assets\Third-Party\TextMesh Pro\Resources\LineBreaking Leading Characters.txt" />
      <None Include="Assets\Third-Party\TextMesh Pro\Shaders\TMPro_Properties.cginc" />
      <None Include="Assets\Third-Party\TextMesh Pro\Shaders\TMPro_Surface.cginc" />
+     <None Include="Assets\Scripts\Shaders\Post-Processing\Resources\ColorTintPostProcessShader.shader" />
      <None Include="Assets\Third-Party\TextMesh Pro\Resources\LineBreaking Following Characters.txt" />
      <None Include="Assets\Third-Party\Retro 3D Shader Pack for Unity\Shaders\CG_Includes\RetroUnlit.cginc" />
      <None Include="Assets\Third-Party\Retro 3D Shader Pack for Unity\Shaders\RetroUnityLit.shader" />

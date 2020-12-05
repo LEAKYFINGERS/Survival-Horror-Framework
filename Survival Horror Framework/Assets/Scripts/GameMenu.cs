@@ -1,7 +1,7 @@
 ﻿////////////////////////////////////////
 // Author:              LEAKYFINGERS
 // Date created:        16.11.20
-// Date last edited:    22.11.20
+// Date last edited:    05.12.20
 ////////////////////////////////////////
 using System.Collections;
 using System.Collections.Generic;
@@ -18,7 +18,7 @@ namespace SurvivalHorrorFramework
         public AudioClip ActivateSelectedTileSound;
         public AudioClip ChangeSelectedTileSound;
         public AudioClip GoBackInMenuSound;
-        public Image ActivationFadeImage; // The UI image (usually solid black) which fades in and out each time the menu transitions between activated and deactivated.
+        public ColorTintPostProcessHandler FadeHandler;        
         public Image BackgroundImage;
         public List<MenuTile> ParentMenuTileGroup; // The initial group of menu tiles which are pushed onto the stack of menu tile groups and thus form the first interactive 'layer' of the menu.
         public PauseHandler ScenePauseHandler;        
@@ -70,29 +70,15 @@ namespace SurvivalHorrorFramework
                 audioSourceComponent.PlayOneShot(GoBackInMenuSound);
             }
 
-            // Fades the activation fade image from clear to opaque.
-            float timer = 0.0f;
-            while (timer < ActivationFadeDuration / 2.0f)
-            {
-                ActivationFadeImage.color = Color.Lerp(Color.clear, activationFadeImageColor, timer / (ActivationFadeDuration / 2.0f));
-
-                timer += Time.deltaTime;
-                yield return null;
-            }
-            ActivationFadeImage.color = activationFadeImageColor;
+            // Fades the activation fade image from clear to opaque.           
+            FadeHandler.FadeToColor(Color.black, ActivationFadeDuration / 2.0f);
+            yield return new WaitForSecondsRealtime(ActivationFadeDuration / 2.0f);            
 
             BackgroundImage.gameObject.SetActive(isBeingActivated);
 
-            // Fades the activation fade image back to clear.
-            timer = 0.0f;
-            while (timer < ActivationFadeDuration / 2.0f)
-            {
-                ActivationFadeImage.color = Color.Lerp(activationFadeImageColor, Color.clear, timer / (ActivationFadeDuration / 2.0f));
-
-                timer += Time.deltaTime;
-                yield return null;
-            }
-            ActivationFadeImage.color = Color.clear;
+            // Fades the activation fade image back to clear.            
+            FadeHandler.FadeToColor(Color.clear, ActivationFadeDuration / 2.0f);
+            yield return new WaitForSecondsRealtime(ActivationFadeDuration / 2.0f);
 
             if (!isBeingActivated)
             {
@@ -108,9 +94,6 @@ namespace SurvivalHorrorFramework
         private void Awake()
         {
             audioSourceComponent = GetComponent<AudioSource>();
-
-            activationFadeImageColor = ActivationFadeImage.color;
-            ActivationFadeImage.color = Color.clear;
 
             BackgroundImage.gameObject.SetActive(false);
 

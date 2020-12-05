@@ -11,6 +11,7 @@ namespace SurvivalHorrorFramework
 {
     public class TestInteractiveBox : InteractiveObject
     {
+        public ColorTintPostProcessHandler FadeHandler;
         public DialogDisplay SceneDialogDisplay;
         public Dialog InteractDialog;
 
@@ -21,7 +22,9 @@ namespace SurvivalHorrorFramework
                 GetComponent<Renderer>().material.color = new Color(Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f));
                 Debug.Log("Interacted with test box.");
 
-                SceneDialogDisplay.PauseSceneAndDisplayDialog(InteractDialog);
+                FadeHandler.FadeToColor(Color.black, Color.clear, 3.0f);
+
+                //SceneDialogDisplay.PauseSceneAndDisplayDialog(InteractDialog);
             }
         }        
     }
