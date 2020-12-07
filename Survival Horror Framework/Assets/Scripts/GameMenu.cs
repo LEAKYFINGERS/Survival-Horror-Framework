@@ -1,7 +1,7 @@
 ﻿////////////////////////////////////////
 // Author:              LEAKYFINGERS
 // Date created:        16.11.20
-// Date last edited:    05.12.20
+// Date last edited:    07.12.20
 ////////////////////////////////////////
 using System.Collections;
 using System.Collections.Generic;
@@ -15,24 +15,36 @@ namespace SurvivalHorrorFramework
     // The script used to handle the collection of objects which make up the in-game menu.
     public class GameMenu : MonoBehaviour
     {
+        public enum MenuActivationMode
+        {
+            Default,
+            AddItem
+        }
+
         public AudioClip ActivateSelectedTileSound;
         public AudioClip ChangeSelectedTileSound;
         public AudioClip GoBackInMenuSound;
-        public ColorTintPostProcessHandler FadeHandler;        
+        public ColorTintPostProcessHandler FadeHandler;
         public Image BackgroundImage;
-        public List<MenuTile> ParentMenuTileGroup; // The initial group of menu tiles which are pushed onto the stack of menu tile groups and thus form the first interactive 'layer' of the menu.
-        public PauseHandler ScenePauseHandler;        
+        public List<MenuTile> DefaultParentMenuTileGroup; // The initial group of menu tiles which are pushed onto the stack of menu tile groups and thus form the first interactive 'layer' of the menu.
+        public List<MenuTile> AddItemParentMenuTileGroup; // The initial group of menu tiles which are pushed onto the stack of menu tile groups and thus form the first interactive 'layer' of the menu.
+        public PauseHandler ScenePauseHandler;
         public float ActivationFadeDuration = 0.25f;
 
-        // Activates or deactivates the menu if the scene isn't already currently paused (e.g. for camera transition stutter effect).
-        public void SetMenuActiveState(bool activeState)
+        // Activates the menu if the scene isn't already currently paused (e.g. for camera transition stutter effect).
+        public void ActivateMenu(MenuActivationMode activationMode = MenuActivationMode.Default)
         {
-            if (!ScenePauseHandler.IsScenePaused || ScenePauseHandler.IsScenePaused && isMenuActive && !activeState)
+            if (!isMenuActive && !ScenePauseHandler.IsScenePaused && !isActivationFadeCoroutineRunning)
             {
-                if (!isActivationFadeCoroutineRunning)
-                {
-                    StartCoroutine("MenuActivationCoroutine", activeState);
-                }
+                StartCoroutine("ActivateMenuCoroutine", activationMode);
+            }
+        }
+
+        public void DeactivateMenu()
+        {
+            if (isMenuActive && ScenePauseHandler.IsScenePaused && !isActivationFadeCoroutineRunning)
+            {
+                StartCoroutine("DeactivateMenuCoroutine");
             }
         }
 
@@ -41,7 +53,7 @@ namespace SurvivalHorrorFramework
         {
             menuTileGroups.Push(menuTileGroup);
             SetSelectedMenuTile(menuTileGroups.Peek()[0]);
-        }        
+        }
 
 
         private AudioSource audioSourceComponent;
@@ -56,38 +68,54 @@ namespace SurvivalHorrorFramework
         private bool isActivationFadeCoroutineRunning;
         private int currentlySelectedMenuTileIndex; // The index of the currently selected menu tile within the group that is currently on the top of the menu groups stack.
 
-        // A coroutine which fades the activation fade image from clear to opaque and back again while the menu itself is activated or deactivated.
-        private IEnumerator MenuActivationCoroutine(bool isBeingActivated)
+        private IEnumerator ActivateMenuCoroutine(MenuActivationMode activationMode)
         {
             isActivationFadeCoroutineRunning = true;
 
-            if (isBeingActivated)
+            ScenePauseHandler.PauseScene();
+
+            if (activationMode == MenuActivationMode.Default)
             {
-                ScenePauseHandler.PauseScene();              
+                SetParentMenuTileGroup(DefaultParentMenuTileGroup);
             }
-            else
+            else if (activationMode == MenuActivationMode.AddItem)
             {
-                audioSourceComponent.PlayOneShot(GoBackInMenuSound);
+                SetParentMenuTileGroup(AddItemParentMenuTileGroup);
             }
 
             // Fades the activation fade image from clear to opaque.           
             FadeHandler.FadeToColor(Color.black, ActivationFadeDuration / 2.0f);
-            yield return new WaitForSecondsRealtime(ActivationFadeDuration / 2.0f);            
+            yield return new WaitForSecondsRealtime(ActivationFadeDuration / 2.0f);
 
-            BackgroundImage.gameObject.SetActive(isBeingActivated);
+            BackgroundImage.gameObject.SetActive(true);
 
             // Fades the activation fade image back to clear.            
             FadeHandler.FadeToColor(Color.clear, ActivationFadeDuration / 2.0f);
             yield return new WaitForSecondsRealtime(ActivationFadeDuration / 2.0f);
 
-            if (!isBeingActivated)
-            {
-                ResetMenuToDefaultState();
-                ScenePauseHandler.UnpauseScene();
-            }
+            isMenuActive = true;
+            isActivationFadeCoroutineRunning = false;
+        }
 
-            isMenuActive = isBeingActivated;
+        private IEnumerator DeactivateMenuCoroutine()
+        {
+            isActivationFadeCoroutineRunning = true;
 
+            audioSourceComponent.PlayOneShot(GoBackInMenuSound);
+
+            // Fades the activation fade image from clear to opaque.           
+            FadeHandler.FadeToColor(Color.black, ActivationFadeDuration / 2.0f);
+            yield return new WaitForSecondsRealtime(ActivationFadeDuration / 2.0f);
+
+            BackgroundImage.gameObject.SetActive(false);
+
+            // Fades the activation fade image back to clear.            
+            FadeHandler.FadeToColor(Color.clear, ActivationFadeDuration / 2.0f);
+            yield return new WaitForSecondsRealtime(ActivationFadeDuration / 2.0f);
+
+            ScenePauseHandler.UnpauseScene();
+
+            isMenuActive = false;
             isActivationFadeCoroutineRunning = false;
         }
 
@@ -103,7 +131,7 @@ namespace SurvivalHorrorFramework
         private void Start()
         {
             menuTileGroups = new Stack<List<MenuTile>>();
-            menuTileGroups.Push(ParentMenuTileGroup);
+            menuTileGroups.Push(DefaultParentMenuTileGroup);
             SetSelectedMenuTile(menuTileGroups.Peek()[0]);
         }
 
@@ -112,7 +140,14 @@ namespace SurvivalHorrorFramework
             // Toggles the active state of the menu if the 'Menu' input is pressed.
             if (Input.GetAxis("Menu") == 1.0f && !wasMenuInputDownDuringPreviousUpdate)
             {
-                SetMenuActiveState(!isMenuActive);
+                if (!isMenuActive)
+                {
+                    ActivateMenu();
+                }
+                else
+                {
+                    DeactivateMenu();
+                }
             }
 
             if (isMenuActive)
@@ -165,21 +200,21 @@ namespace SurvivalHorrorFramework
             {
                 audioSourceComponent.PlayOneShot(GoBackInMenuSound);
 
-                if(menuTileGroups.Count > 1)
+                if (menuTileGroups.Count > 1)
                 {
                     PopMenuTileGroup();
                 }
                 else
                 {
-                    SetMenuActiveState(!isMenuActive);
-                }                
+                    DeactivateMenu();
+                }
             }
         }
 
-        // Pops all the menu tile groups other than the one on the bottom of the stack and selects the first tile in that list.
-        private void ResetMenuToDefaultState()
+        // Pops all existing menu tile groups and pushes the specified menu tile group so that it becomes the new 'base' layer of the menu.
+        private void SetParentMenuTileGroup(List<MenuTile> parentTileGroup)
         {
-            if (menuTileGroups.Count > 1)
+            if (menuTileGroups.Count > 0)
             {
                 for (int i = 0; i < menuTileGroups.Count - 1; ++i)
                 {
@@ -187,10 +222,7 @@ namespace SurvivalHorrorFramework
                 }
             }
 
-            if(currentlySelectedMenuTileIndex != 0)
-            {
-                SetSelectedMenuTile(menuTileGroups.Peek()[0]);
-            }
+            PushMenuTileGroup(parentTileGroup);
         }
 
         // If the specified menu tile belongs to the MenuTiles list updates the currently selected menu tile index so that the specified tile is the only one with the 'Selected' status.
@@ -207,7 +239,7 @@ namespace SurvivalHorrorFramework
 
                     if (playSoundEffect)
                     {
-                        audioSourceComponent.PlayOneShot(ChangeSelectedTileSound);                        
+                        audioSourceComponent.PlayOneShot(ChangeSelectedTileSound);
                     }
 
                     break;
