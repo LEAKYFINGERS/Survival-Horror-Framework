@@ -1,7 +1,7 @@
 ﻿////////////////////////////////////////
 // Author:              LEAKYFINGERS
 // Date created:        16.11.20
-// Date last edited:    07.12.20
+// Date last edited:    10.12.20
 ////////////////////////////////////////
 using System.Collections;
 using System.Collections.Generic;
@@ -52,6 +52,10 @@ namespace SurvivalHorrorFramework
         public void PushMenuTileGroup(List<MenuTile> menuTileGroup)
         {
             menuTileGroups.Push(menuTileGroup);
+            foreach (MenuTile menuTile in menuTileGroups.Peek())
+            {
+                menuTile.gameObject.SetActive(true);
+            }
             SetSelectedMenuTile(menuTileGroups.Peek()[0]);
         }
 
@@ -130,9 +134,16 @@ namespace SurvivalHorrorFramework
 
         private void Start()
         {
+            foreach(MenuTile menuTile in DefaultParentMenuTileGroup)
+            {
+                menuTile.gameObject.SetActive(false);
+            }
+            foreach (MenuTile menuTile in AddItemParentMenuTileGroup)
+            {
+                menuTile.gameObject.SetActive(false);
+            }
+
             menuTileGroups = new Stack<List<MenuTile>>();
-            menuTileGroups.Push(DefaultParentMenuTileGroup);
-            SetSelectedMenuTile(menuTileGroups.Peek()[0]);
         }
 
         private void Update()
@@ -142,7 +153,7 @@ namespace SurvivalHorrorFramework
             {
                 if (!isMenuActive)
                 {
-                    ActivateMenu();
+                    ActivateMenu(MenuActivationMode.Default);
                 }
                 else
                 {
@@ -214,13 +225,15 @@ namespace SurvivalHorrorFramework
         // Pops all existing menu tile groups and pushes the specified menu tile group so that it becomes the new 'base' layer of the menu.
         private void SetParentMenuTileGroup(List<MenuTile> parentTileGroup)
         {
-            if (menuTileGroups.Count > 0)
+            if (parentTileGroup.Count == 0)
             {
-                for (int i = 0; i < menuTileGroups.Count - 1; ++i)
-                {
-                    PopMenuTileGroup();
-                }
+                throw new System.Exception("The parent tile group must contain at least one MenuTile instance.");
             }
+
+            for (int i = 0; i < menuTileGroups.Count; ++i)
+            {
+                PopMenuTileGroup();
+            }            
 
             PushMenuTileGroup(parentTileGroup);
         }
@@ -257,7 +270,10 @@ namespace SurvivalHorrorFramework
             }
             menuTileGroups.Pop();
 
-            SetSelectedMenuTile(menuTileGroups.Peek()[0]);
+            if (menuTileGroups.Count > 0)
+            {
+                SetSelectedMenuTile(menuTileGroups.Peek()[0]);
+            }
         }
     }
 }

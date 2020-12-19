@@ -18,7 +18,7 @@ namespace SurvivalHorrorFramework
         public MenuTile TileToRight; // The tile which will become selected after the player presses 'Right' while this tile is selected.
         public MenuTile TileAbove; // The tile which will become selected after the player presses 'Up' while this tile is selected.
         public MenuTile TileBelow; // The tile which will become selected after the player presses 'Down' while this tile is selected.
-        public Sprite DefaultSprite; 
+        public Sprite DefaultSprite;
         public Sprite SelectedSprite;
         public bool PlayMenuActivationSoundOnActivateTile = false;
 
@@ -27,7 +27,7 @@ namespace SurvivalHorrorFramework
             get { return isSelected; }
             set
             {
-                if(value)
+                if (value)
                 {
                     imageComponent.sprite = SelectedSprite;
                 }
@@ -41,7 +41,7 @@ namespace SurvivalHorrorFramework
         }
 
         // Called when the player presses the 'Use' input while this tile is selected in the menu.
-        public virtual void ActivateTile(GameMenu gameMenu) { }        
+        public virtual void ActivateTile(GameMenu gameMenu) { }
 
 
         protected Image imageComponent;
@@ -51,6 +51,8 @@ namespace SurvivalHorrorFramework
         {
             imageComponent = GetComponent<Image>();
             IsSelected = false;
+
+            gameObject.SetActive(false);
         }
     }
 }
