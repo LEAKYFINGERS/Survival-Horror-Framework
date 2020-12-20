@@ -1,7 +1,7 @@
 ﻿////////////////////////////////////////
 // Author:              LEAKYFINGERS
 // Date created:        25.10.20
-// Date last edited:    23.11.20
+// Date last edited:    20.12.20
 ////////////////////////////////////////
 using System.Collections;
 using System.Collections.Generic;
@@ -15,7 +15,7 @@ namespace SurvivalHorrorFramework
     [RequireComponent(typeof(CharacterController))]
     public class TankControlPlayer : MonoBehaviour
     {
-        public PlayerInteractionTrigger InteractionTrigger; // The trigger collider used to determine which interactive objects within the scene are currently within reach of the player.
+        public PlayerInteractionTrigger InteractionTrigger; // The trigger collider used to determine which interactive objects within the scene are currently within reach of the player.        
         public float WalkSpeed = 2.0f; // The movement speed of the player in units-per-second when walking forwards.
         public float RetreatSpeed = 1.5f; // The movement speed of the player in units-per-second when walking backwards.
         public float RunSpeed = 4.0f; // The movement speed of the player in units-per-second when running forwards - cannot run backwards.
@@ -25,7 +25,7 @@ namespace SurvivalHorrorFramework
 
 
         private Animator animatorComponent;
-        private CharacterController characterControllerComponent;
+        private CharacterController characterControllerComponent;        
         private bool isPaused;
         private bool wasUseInputDownDuringPreviousUpdate;
 
@@ -33,6 +33,27 @@ namespace SurvivalHorrorFramework
         {
             animatorComponent = GetComponent<Animator>();
             characterControllerComponent = GetComponent<CharacterController>();
+        }
+
+        private void Start()
+        {
+            SceneEntrancePoint[] sceneEntrancePoints = GameObject.FindObjectsOfType<SceneEntrancePoint>(); // An array of the entrance points in the scene which can be used to orient the player character when the scene is loaded.
+            if(sceneEntrancePoints.Length > 0)
+            {
+                // If the name of any of the scene entrance points matches the entrance point name specified by the exit point of the previous scene, positions and rotates the player to line up with that specific entrance point.
+                foreach(SceneEntrancePoint sceneEntrancePoint in sceneEntrancePoints)
+                {
+                    if(sceneEntrancePoint.name == SceneTransferrableData.NextSceneEntrancePointName)
+                    {
+                        characterControllerComponent.enabled = false;
+                        transform.position = sceneEntrancePoint.transform.position;
+                        transform.rotation = Quaternion.Euler(0.0f, sceneEntrancePoint.transform.rotation.eulerAngles.y, 0.0f);
+                        characterControllerComponent.enabled = true;
+
+                        break;
+                    }
+                }                
+            }
         }
 
         private void Update()

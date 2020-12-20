@@ -16,11 +16,13 @@ namespace SurvivalHorrorFramework
         public PauseHandler ScenePauseHandler;        
         public float FadeDuration;
         public int DestinationSceneIndex;
+        public string DestinationSceneEntrancePointName;
 
         public override void Interact()
         {
             ScenePauseHandler.PauseScene();
 
+            SceneTransferrableData.NextSceneEntrancePointName = DestinationSceneEntrancePointName;
             SceneManager.LoadScene(DestinationSceneIndex);
 
             //FadeHandler.FadeToColor(Color.black, FadeDuration);
