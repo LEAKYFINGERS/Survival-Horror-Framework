@@ -1,7 +1,7 @@
 ﻿////////////////////////////////////////
 // Author:              LEAKYFINGERS
 // Date created:        29.10.20
-// Date last edited:    19.12.20
+// Date last edited:    21.12.20
 ////////////////////////////////////////
 using System.Collections;
 using System.Collections.Generic;
@@ -17,6 +17,14 @@ namespace SurvivalHorrorFramework
         public PauseHandler ScenePauseHandler;
         public float ScenePauseOnCameraChangeDuration = 0.25f;
         public float CanvasForwardOffsetFromCamera = 0.31f; // The offset value used to position the each of the canvases in front of the active camera.   
+
+        public void SetAllFixedCamerasActiveState(bool activeState)
+        {
+            foreach(FixedCamera camera in FixedCameras)
+            {
+                camera.gameObject.SetActive(activeState);
+            }
+        }
 
 
         private List<FixedCamera> fixedCamerasWithPlayerInActivationTriggerThisFrame; // A list of the fixed cameras which contain an object tagged "Player" within any of their FixedCameraActivationTriggers during the current frame.
