@@ -1,30 +1,45 @@
 ﻿////////////////////////////////////////
 // Author:              LEAKYFINGERS
 // Date created:        21.12.20
-// Date last edited:    21.12.20
+// Date last edited:    22.12.20
 ////////////////////////////////////////
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace SurvivalHorrorFramework
 {
-    // The script for a camera used to play short animated vignettes which convey interactions such as entering a door or going up stairs using an animated object. 
+    // The script for a camera used to play short animated vignettes used to convey interactions such as entering a door or going up stairs by spawning and viewing an animated object. 
     [RequireComponent(typeof(Camera))]
     public class VignetteCamera : MonoBehaviour
     {
         public ColorTintPostProcessHandler FadeHandler;
         public FixedCameraHandler SceneFixedCameraHandler;
         public PauseHandler ScenePauseHandler;
-        public float FadeDuration = 0.5f;
-        //public Transform TestVignetteObjectPrefab; // DEBUG
+        public float FadeDuration = 0.5f; // The duration of each fade to/from black when a vignette is being played.
 
-        public void PlayVignette(Transform animatedVignetteObjectPrefab, bool transitionBackToSceneOnceComplete = false)
+        // Initialises a coroutine which pauses the scene and disables the fixed camera handler before spawning the animated vignette object from a prefab to view through the vignette camera until the animation is completed.
+        public void PlayVignette(Transform animatedVignetteObjectPrefab)
         {
-            if(!isPlayVignetteCoroutineRunning)
+            if (!isPlayVignetteCoroutineRunning)
             {
-                animatedVignetteObjectPrefabForCoroutine = animatedVignetteObjectPrefab;
-                StartCoroutine("PlayVignetteCoroutine", transitionBackToSceneOnceComplete);
+                coroutineSceneToLoadIndex = -1; // A scene will only be loaded if the index is greater than or equal to zero.
+                StartCoroutine("PlayVignetteCoroutine", animatedVignetteObjectPrefab);
+            }
+            else
+            {
+                Debug.Log("The PlayVignette() function cannot be executed because the PlayVignetteCoroutine() is already running.");
+            }
+        }
+
+        // Initialises a coroutine which pauses the scene and disables the fixed camera handler before spawning the animated vignette object from a prefab to view through the vignette camera until the animation is completed and then loads the specified scene.
+        public void PlayVignetteAndLoadScene(Transform animatedVignetteObjectPrefab, int sceneToLoadIndex)
+        {
+            if (!isPlayVignetteCoroutineRunning)
+            {
+                coroutineSceneToLoadIndex = sceneToLoadIndex;
+                StartCoroutine("PlayVignetteCoroutine", animatedVignetteObjectPrefab);
             }
             else
             {
@@ -34,10 +49,11 @@ namespace SurvivalHorrorFramework
 
 
         private AudioListener audioListenerComponent;
-        private Camera cameraComponent;
-        private Transform animatedVignetteObjectPrefabForCoroutine;
+        private Camera cameraComponent;        
         private bool isPlayVignetteCoroutineRunning;
+        private int coroutineSceneToLoadIndex; // Stores the index for the scene to load when the play vignette coroutine is completed - if the value is less than zero, disables the vignette camera and returns back to the current scene instead.
 
+        // The property used to get and set whether the audio listener and camera components of the vignette camera are currently active.
         private bool CameraComponentsAreActive
         {
             get { return audioListenerComponent.enabled == true && cameraComponent.enabled == true; }
@@ -50,41 +66,25 @@ namespace SurvivalHorrorFramework
 
         private void Awake()
         {
-            audioListenerComponent = GetComponent<AudioListener>();            
+            audioListenerComponent = GetComponent<AudioListener>();
             cameraComponent = GetComponent<Camera>();
             CameraComponentsAreActive = false;
         }
 
-        //// DEBUG
-        //private void Update()
-        //{
-        //    if(Input.GetKeyDown(KeyCode.Space))
-        //    {
-        //        PlayVignette();
-        //    }
-        //}
-
-
-        private IEnumerator PlayVignetteCoroutine(bool transitionBackToSceneOnceComplete)
+        // A coroutine which pauses the scene and disables the fixed camera handler before spawning the animated vignette object from a prefab to view through the vignette camera until the animation is completed.
+        private IEnumerator PlayVignetteCoroutine(Transform animatedVignetteObjectPrefab)
         {
             isPlayVignetteCoroutineRunning = true;
-
-            if (!ScenePauseHandler.IsScenePaused)
-            {
-                ScenePauseHandler.PauseScene();
-            }
+            
+            ScenePauseHandler.PauseScene();
             FadeHandler.FadeToColor(Color.black, FadeDuration);
             yield return new WaitForSecondsRealtime(FadeDuration);
 
             SceneFixedCameraHandler.SetAllFixedCamerasActiveState(false);
             CameraComponentsAreActive = true;
+            Transform animatedVignetteObject = GameObject.Instantiate(animatedVignetteObjectPrefab, this.transform);
+            FadeHandler.FadeToColor(Color.clear, FadeDuration);
 
-            Transform animatedVignetteObject = GameObject.Instantiate(animatedVignetteObjectPrefabForCoroutine, this.transform);
-            
-
-            FadeHandler.FadeToColor(Color.clear, FadeDuration);            
-
-            Debug.Log(animatedVignetteObject.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).length);
             yield return new WaitForSecondsRealtime(animatedVignetteObject.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).length - FadeDuration);
 
             FadeHandler.FadeToColor(Color.black, FadeDuration);
@@ -92,24 +92,21 @@ namespace SurvivalHorrorFramework
 
             Destroy(animatedVignetteObject.gameObject);
 
-
-            if (transitionBackToSceneOnceComplete)
+            if (coroutineSceneToLoadIndex < 0)
             {
                 CameraComponentsAreActive = false;
                 SceneFixedCameraHandler.SetAllFixedCamerasActiveState(true);
-
                 FadeHandler.FadeToColor(Color.clear, FadeDuration);
                 yield return new WaitForSecondsRealtime(FadeDuration);
 
-                if (ScenePauseHandler.IsScenePaused)
-                {
-                    ScenePauseHandler.UnpauseScene();
-                }
+                ScenePauseHandler.UnpauseScene();
+
+                isPlayVignetteCoroutineRunning = false;
             }
-
-
-
-            isPlayVignetteCoroutineRunning = false;
+            else
+            {
+                SceneManager.LoadScene(coroutineSceneToLoadIndex);
+            }            
         }
     }
 }

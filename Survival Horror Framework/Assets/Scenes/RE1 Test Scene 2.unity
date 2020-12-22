@@ -2777,9 +2777,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dcfd6ee831b71b34c9de1c2afd36e513, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  FadeHandler: {fileID: 99092651}
-  ScenePauseHandler: {fileID: 1998035336}
-  FadeDuration: 1
+  AnimatedVignetteObjectPrefab: {fileID: 5560908577262490357, guid: 6091e7bbca3896648baf38e0b5b6bf9a,
+    type: 3}
+  SceneVignetteCamera: {fileID: 1695716518}
   DestinationSceneIndex: 0
   DestinationSceneEntrancePointName: Lower West Door Entrance
 --- !u!54 &210282472
@@ -7192,7 +7192,7 @@ MonoBehaviour:
     meshQuery:
       layers: 16777223
       maskAndChannels: 234881031
-    surfaceParameter: 16218
+    surfaceParameter: 16264
     meshQueryIndex: 4
     subMeshQueryIndex: 0
     geometryHashValue: 2692450668512513905
@@ -8412,7 +8412,7 @@ MonoBehaviour:
     meshQuery:
       layers: 16777223
       maskAndChannels: 234881031
-    surfaceParameter: 16210
+    surfaceParameter: 16256
     meshQueryIndex: 8
     subMeshQueryIndex: 0
     geometryHashValue: -3103938175138876958
@@ -8991,9 +8991,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dcfd6ee831b71b34c9de1c2afd36e513, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  FadeHandler: {fileID: 99092651}
-  ScenePauseHandler: {fileID: 1998035336}
-  FadeDuration: 1
+  AnimatedVignetteObjectPrefab: {fileID: 5560908577262490357, guid: 6091e7bbca3896648baf38e0b5b6bf9a,
+    type: 3}
+  SceneVignetteCamera: {fileID: 1695716518}
   DestinationSceneIndex: 0
   DestinationSceneEntrancePointName: Upper West Door Entrance
 --- !u!65 &812475249
@@ -9400,7 +9400,7 @@ MonoBehaviour:
     meshQuery:
       layers: 33554440
       maskAndChannels: 8
-    surfaceParameter: 16200
+    surfaceParameter: 16246
     meshQueryIndex: 1
     subMeshQueryIndex: 0
     geometryHashValue: 6589550487295123611
@@ -9979,7 +9979,7 @@ MonoBehaviour:
     meshQuery:
       layers: 16777223
       maskAndChannels: 234881031
-    surfaceParameter: 16208
+    surfaceParameter: 16254
     meshQueryIndex: 0
     subMeshQueryIndex: 0
     geometryHashValue: -1215429908620980118
@@ -10840,7 +10840,7 @@ MonoBehaviour:
     meshQuery:
       layers: 16777223
       maskAndChannels: 234881031
-    surfaceParameter: 16220
+    surfaceParameter: 16266
     meshQueryIndex: 5
     subMeshQueryIndex: 0
     geometryHashValue: 7880330362486951597
@@ -18446,7 +18446,7 @@ MonoBehaviour:
     meshQuery:
       layers: 16777223
       maskAndChannels: 234881031
-    surfaceParameter: 16230
+    surfaceParameter: 16278
     meshQueryIndex: 9
     subMeshQueryIndex: 0
     geometryHashValue: 8382387974864537433
@@ -18466,6 +18466,102 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 62344b9154e22e64cbb0dd4e00098534, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!1001 &1695716517
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1520390972784235818, guid: 4b23eedfb7da87a45a363238cd78f425,
+        type: 3}
+      propertyPath: FadeHandler
+      value: 
+      objectReference: {fileID: 99092651}
+    - target: {fileID: 1520390972784235818, guid: 4b23eedfb7da87a45a363238cd78f425,
+        type: 3}
+      propertyPath: SceneFixedCameraHandler
+      value: 
+      objectReference: {fileID: 99092648}
+    - target: {fileID: 1520390972784235818, guid: 4b23eedfb7da87a45a363238cd78f425,
+        type: 3}
+      propertyPath: ScenePauseHandler
+      value: 
+      objectReference: {fileID: 1998035336}
+    - target: {fileID: 1520390972784235819, guid: 4b23eedfb7da87a45a363238cd78f425,
+        type: 3}
+      propertyPath: m_Name
+      value: Vignette Camera
+      objectReference: {fileID: 0}
+    - target: {fileID: 1520390972784235823, guid: 4b23eedfb7da87a45a363238cd78f425,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 1520390972784235823, guid: 4b23eedfb7da87a45a363238cd78f425,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1520390972784235823, guid: 4b23eedfb7da87a45a363238cd78f425,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1520390972784235823, guid: 4b23eedfb7da87a45a363238cd78f425,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1520390972784235823, guid: 4b23eedfb7da87a45a363238cd78f425,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1520390972784235823, guid: 4b23eedfb7da87a45a363238cd78f425,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1520390972784235823, guid: 4b23eedfb7da87a45a363238cd78f425,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1520390972784235823, guid: 4b23eedfb7da87a45a363238cd78f425,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 1520390972784235823, guid: 4b23eedfb7da87a45a363238cd78f425,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1520390972784235823, guid: 4b23eedfb7da87a45a363238cd78f425,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1520390972784235823, guid: 4b23eedfb7da87a45a363238cd78f425,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 4b23eedfb7da87a45a363238cd78f425, type: 3}
+--- !u!114 &1695716518 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1520390972784235818, guid: 4b23eedfb7da87a45a363238cd78f425,
+    type: 3}
+  m_PrefabInstance: {fileID: 1695716517}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e212db05841c4574d8e22b1adab17648, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1736714875
@@ -20912,7 +21008,7 @@ MonoBehaviour:
     meshQuery:
       layers: 16777223
       maskAndChannels: 234881031
-    surfaceParameter: 16212
+    surfaceParameter: 16258
     meshQueryIndex: 7
     subMeshQueryIndex: 0
     geometryHashValue: -2472757795336705537
