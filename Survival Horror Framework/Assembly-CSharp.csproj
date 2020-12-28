@@ -53,10 +53,12 @@
     <UnityVersion>2020.1.10f1</UnityVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\PlayAudioSource.cs" />
     <Compile Include="Assets\Scripts\MenuTile.cs" />
     <Compile Include="Assets\Scripts\InteractiveObject.cs" />
     <Compile Include="Assets\Scripts\DialogDisplay.cs" />
     <Compile Include="Assets\Scripts\Item.cs" />
+    <Compile Include="Assets\Scripts\VignetteCamera.cs" />
     <Compile Include="Assets\Scripts\ParentMenuTile.cs" />
     <Compile Include="Assets\Scripts\FootstepHandler.cs" />
     <Compile Include="Assets\Third-Party\Retro 3D Shader Pack for Unity\Example Scene\Scripts\Rotate.cs" />
@@ -79,8 +81,8 @@
     <Compile Include="Assets\Scripts\FootstepFloorTextures.cs" />
     <Compile Include="Assets\Scripts\Dialog.cs" />
     <Compile Include="Assets\Scripts\FixedCamera.cs" />
-    <Compile Include="Assets\Scripts\VignetteCamera.cs" />
-    <Compile Include="Assets\Scripts\PlayAudioSource.cs" />
+    <Compile Include="Assets\Scripts\InventoryTile.cs" />
+    <Compile Include="Assets\Scripts\InventoryItem.cs" />
   </ItemGroup>
   <ItemGroup>
      <None Include="Assets\Third-Party\Retro 3D Shader Pack for Unity\Shaders\CG_Includes\RetroFlatLit.cginc" />

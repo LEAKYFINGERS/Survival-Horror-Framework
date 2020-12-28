@@ -1,7 +1,7 @@
 ﻿////////////////////////////////////////
 // Author:              LEAKYFINGERS
 // Date created:        17.11.20
-// Date last edited:    22.11.20
+// Date last edited:    28.11.20
 ////////////////////////////////////////
 using System.Collections;
 using System.Collections.Generic;
@@ -14,29 +14,61 @@ namespace SurvivalHorrorFramework
     // The script for an individual menu tile which can be selected and activated by the player in the game menu as well as inherited from to extend functionality.
     public class MenuTile : MonoBehaviour
     {
-        public MenuTile TileToLeft; // The tile which will become selected after the player presses 'Left' while this tile is selected.
-        public MenuTile TileToRight; // The tile which will become selected after the player presses 'Right' while this tile is selected.
-        public MenuTile TileAbove; // The tile which will become selected after the player presses 'Up' while this tile is selected.
-        public MenuTile TileBelow; // The tile which will become selected after the player presses 'Down' while this tile is selected.
+        public MenuTile TileToLeft; 
+        public MenuTile TileToRight; 
+        public MenuTile TileAbove; 
+        public MenuTile TileBelow; 
         public Sprite DefaultSprite;
         public Sprite SelectedSprite;
+        public bool isVisibleWhenNotEnabled = false;
         public bool PlayMenuActivationSoundOnActivateTile = false;
 
+        // The property used to get and set whether the tile is 'enabled', which controls whether or not it can be selected.
+        public bool IsEnabled
+        {
+            get { return isEnabled; }
+            set
+            {
+                if (value)
+                {
+                    imageComponent.enabled = true;
+                    for (int i = 0; i < transform.childCount; ++i)
+                    {
+                        transform.GetChild(i).gameObject.SetActive(true);
+                    }
+                }
+                else if(!isVisibleWhenNotEnabled)
+                {
+                    imageComponent.enabled = false;              
+                    for(int i = 0; i < transform.childCount; ++i)
+                    {
+                        transform.GetChild(i).gameObject.SetActive(false);
+                    }
+                }
+
+                isEnabled = value;
+            }
+        }
+
+        // The property used to get and set whether the tile is 'selected', which controls whether or not it can be activated and can only occur while it is also enabled.
         public bool IsSelected
         {
             get { return isSelected; }
             set
             {
-                if (value)
+                if (isEnabled)
                 {
-                    imageComponent.sprite = SelectedSprite;
-                }
-                else
-                {
-                    imageComponent.sprite = DefaultSprite;
-                }
+                    if (value && isEnabled)
+                    {
+                        imageComponent.sprite = SelectedSprite;
+                    }
+                    else
+                    {
+                        imageComponent.sprite = DefaultSprite;
+                    }
 
-                isSelected = value;
+                    isSelected = value;
+                }
             }
         }
 
@@ -45,14 +77,15 @@ namespace SurvivalHorrorFramework
 
 
         protected Image imageComponent;
+        protected bool isEnabled;
         protected bool isSelected;
 
         protected void Awake()
         {
             imageComponent = GetComponent<Image>();
-            IsSelected = false;
 
-            gameObject.SetActive(false);
+            IsSelected = false;
+            IsEnabled = false;            
         }
     }
 }

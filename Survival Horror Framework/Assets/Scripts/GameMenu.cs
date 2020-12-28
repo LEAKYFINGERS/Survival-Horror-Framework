@@ -1,7 +1,7 @@
 ﻿////////////////////////////////////////
 // Author:              LEAKYFINGERS
 // Date created:        16.11.20
-// Date last edited:    10.12.20
+// Date last edited:    28.12.20
 ////////////////////////////////////////
 using System.Collections;
 using System.Collections.Generic;
@@ -26,8 +26,8 @@ namespace SurvivalHorrorFramework
         public AudioClip GoBackInMenuSound;
         public ColorTintPostProcessHandler FadeHandler;
         public Image BackgroundImage;
-        public List<MenuTile> DefaultParentMenuTileGroup; // The initial group of menu tiles which are pushed onto the stack of menu tile groups and thus form the first interactive 'layer' of the menu.
-        public List<MenuTile> AddItemParentMenuTileGroup; // The initial group of menu tiles which are pushed onto the stack of menu tile groups and thus form the first interactive 'layer' of the menu.
+        public List<MenuTile> DefaultParentMenuTileGroup; // The initial group of menu tiles which are pushed onto the stack of menu tile groups when the menu is activated normally.
+        public List<MenuTile> AddItemParentMenuTileGroup; // The initial group of menu tiles which are pushed onto the stack of menu tile groups when an item is to be added to the menu inventory.
         public PauseHandler ScenePauseHandler;
         public float ActivationFadeDuration = 0.25f;
 
@@ -54,7 +54,7 @@ namespace SurvivalHorrorFramework
             menuTileGroups.Push(menuTileGroup);
             foreach (MenuTile menuTile in menuTileGroups.Peek())
             {
-                menuTile.gameObject.SetActive(true);
+                menuTile.IsEnabled = true;
             }
             SetSelectedMenuTile(menuTileGroups.Peek()[0]);
         }
@@ -76,7 +76,13 @@ namespace SurvivalHorrorFramework
         {
             isActivationFadeCoroutineRunning = true;
 
-            ScenePauseHandler.PauseScene();
+            ScenePauseHandler.PauseScene();            
+
+            // Fades the activation fade image from clear to opaque.           
+            FadeHandler.FadeToColor(Color.black, ActivationFadeDuration / 2.0f);
+            yield return new WaitForSecondsRealtime(ActivationFadeDuration / 2.0f);
+
+            BackgroundImage.gameObject.SetActive(true);
 
             if (activationMode == MenuActivationMode.Default)
             {
@@ -86,12 +92,6 @@ namespace SurvivalHorrorFramework
             {
                 SetParentMenuTileGroup(AddItemParentMenuTileGroup);
             }
-
-            // Fades the activation fade image from clear to opaque.           
-            FadeHandler.FadeToColor(Color.black, ActivationFadeDuration / 2.0f);
-            yield return new WaitForSecondsRealtime(ActivationFadeDuration / 2.0f);
-
-            BackgroundImage.gameObject.SetActive(true);
 
             // Fades the activation fade image back to clear.            
             FadeHandler.FadeToColor(Color.clear, ActivationFadeDuration / 2.0f);
@@ -134,15 +134,6 @@ namespace SurvivalHorrorFramework
 
         private void Start()
         {
-            foreach(MenuTile menuTile in DefaultParentMenuTileGroup)
-            {
-                menuTile.gameObject.SetActive(false);
-            }
-            foreach (MenuTile menuTile in AddItemParentMenuTileGroup)
-            {
-                menuTile.gameObject.SetActive(false);
-            }
-
             menuTileGroups = new Stack<List<MenuTile>>();
         }
 
@@ -179,19 +170,19 @@ namespace SurvivalHorrorFramework
         private void UpdateMenuTiles()
         {
             // Updates which is the currently selected menu tile according to the player selection inputs.
-            if (Input.GetAxis("Horizontal") == -1.0f && !wasHorizontalInputDownDuringPreviousUpdate && menuTileGroups.Peek()[currentlySelectedMenuTileIndex].TileToLeft)
+            if (Input.GetAxis("Horizontal") == -1.0f && !wasHorizontalInputDownDuringPreviousUpdate && menuTileGroups.Peek()[currentlySelectedMenuTileIndex].TileToLeft && menuTileGroups.Peek()[currentlySelectedMenuTileIndex].TileToLeft.IsEnabled)
             {
                 SetSelectedMenuTile(menuTileGroups.Peek()[currentlySelectedMenuTileIndex].TileToLeft, true);
             }
-            else if (Input.GetAxis("Horizontal") == 1.0f && !wasHorizontalInputDownDuringPreviousUpdate && menuTileGroups.Peek()[currentlySelectedMenuTileIndex].TileToRight)
+            else if (Input.GetAxis("Horizontal") == 1.0f && !wasHorizontalInputDownDuringPreviousUpdate && menuTileGroups.Peek()[currentlySelectedMenuTileIndex].TileToRight && menuTileGroups.Peek()[currentlySelectedMenuTileIndex].TileToRight.IsEnabled)
             {
                 SetSelectedMenuTile(menuTileGroups.Peek()[currentlySelectedMenuTileIndex].TileToRight, true);
             }
-            else if (Input.GetAxis("Vertical") == 1.0f && !wasVerticalInputDownDuringPreviousUpdate && menuTileGroups.Peek()[currentlySelectedMenuTileIndex].TileAbove)
+            else if (Input.GetAxis("Vertical") == 1.0f && !wasVerticalInputDownDuringPreviousUpdate && menuTileGroups.Peek()[currentlySelectedMenuTileIndex].TileAbove && menuTileGroups.Peek()[currentlySelectedMenuTileIndex].TileAbove.IsEnabled)
             {
                 SetSelectedMenuTile(menuTileGroups.Peek()[currentlySelectedMenuTileIndex].TileAbove, true);
             }
-            else if (Input.GetAxis("Vertical") == -1.0f && !wasVerticalInputDownDuringPreviousUpdate && menuTileGroups.Peek()[currentlySelectedMenuTileIndex].TileBelow)
+            else if (Input.GetAxis("Vertical") == -1.0f && !wasVerticalInputDownDuringPreviousUpdate && menuTileGroups.Peek()[currentlySelectedMenuTileIndex].TileBelow && menuTileGroups.Peek()[currentlySelectedMenuTileIndex].TileBelow.IsEnabled)
             {
                 SetSelectedMenuTile(menuTileGroups.Peek()[currentlySelectedMenuTileIndex].TileBelow, true);
             }
@@ -266,7 +257,7 @@ namespace SurvivalHorrorFramework
             SetSelectedMenuTile(menuTileGroups.Peek()[0]);
             foreach (MenuTile menuTile in menuTileGroups.Peek())
             {
-                menuTile.gameObject.SetActive(false);
+                menuTile.IsEnabled = false;
             }
             menuTileGroups.Pop();
 
