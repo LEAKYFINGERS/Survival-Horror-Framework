@@ -1,7 +1,7 @@
 ﻿////////////////////////////////////////
 // Author:              LEAKYFINGERS
 // Date created:        16.11.20
-// Date last edited:    28.12.20
+// Date last edited:    02.01.21
 ////////////////////////////////////////
 using System.Collections;
 using System.Collections.Generic;
@@ -15,7 +15,7 @@ namespace SurvivalHorrorFramework
     // The script used to handle the collection of objects which make up the in-game menu.
     public class GameMenu : MonoBehaviour
     {
-        public enum MenuActivationMode
+        public enum MenuMode
         {
             Default,
             AddItem
@@ -25,24 +25,38 @@ namespace SurvivalHorrorFramework
         public AudioClip ChangeSelectedTileSound;
         public AudioClip GoBackInMenuSound;
         public ColorTintPostProcessHandler FadeHandler;
+        public Dialog AddItemDialogTemplate; // The dialog asking the player whether they wish to add an item to their inventory - the name of the inventory item + a question mark will be appended onto the end of the dialog template.
+        public DialogDisplay MenuDialogDisplay; 
         public Image BackgroundImage;
+        public InventoryItemCamera SceneInventoryItemCamera; // The camera used to render the 3D models which represent inventory items within the menu.
         public List<MenuTile> DefaultParentMenuTileGroup; // The initial group of menu tiles which are pushed onto the stack of menu tile groups when the menu is activated normally.
         public List<MenuTile> AddItemParentMenuTileGroup; // The initial group of menu tiles which are pushed onto the stack of menu tile groups when an item is to be added to the menu inventory.
         public PauseHandler ScenePauseHandler;
         public float ActivationFadeDuration = 0.25f;
 
-        // Activates the menu if the scene isn't already currently paused (e.g. for camera transition stutter effect).
-        public void ActivateMenu(MenuActivationMode activationMode = MenuActivationMode.Default)
+        // Activates the menu in the default mode if the scene isn't already currently paused.
+        public void ActivateMenuInDefaultMode()
         {
-            if (!isMenuActive && !ScenePauseHandler.IsScenePaused && !isActivationFadeCoroutineRunning)
+            if (!isMenuActive && !ScenePauseHandler.IsScenePaused && !isActivationCoroutineRunning)
             {
-                StartCoroutine("ActivateMenuCoroutine", activationMode);
+                currentMenuMode = MenuMode.Default;
+                StartCoroutine("ActivateMenuInDefaultModeCoroutine");
+            }
+        }
+
+        // Activates the menu and presents the player with the 'add item' dialog if the scene isn't currently paused.
+        public void ActivateMenuInAddItemMode(InventoryItem itemToAdd)
+        {
+            if (!isMenuActive && !ScenePauseHandler.IsScenePaused && !isActivationCoroutineRunning)
+            {
+                currentMenuMode = MenuMode.AddItem;
+                StartCoroutine("ActivateMenuInAddItemModeCoroutine", itemToAdd);
             }
         }
 
         public void DeactivateMenu()
         {
-            if (isMenuActive && ScenePauseHandler.IsScenePaused && !isActivationFadeCoroutineRunning)
+            if (isMenuActive && ScenePauseHandler.IsScenePaused && !isActivationCoroutineRunning)
             {
                 StartCoroutine("DeactivateMenuCoroutine");
             }
@@ -63,20 +77,22 @@ namespace SurvivalHorrorFramework
         private AudioSource audioSourceComponent;
         private Color activationFadeImageColor; // The initial color tint of the activation fade image - stored so the image can transition between this color and completely transparent.
         private Stack<List<MenuTile>> menuTileGroups; // The stack which contains each of the menu tile groups that form the different interactive 'layers' of the menu.
+        private MenuMode currentMenuMode;
         private bool isMenuActive;
         private bool wasMenuInputDownDuringPreviousUpdate;
         private bool wasHorizontalInputDownDuringPreviousUpdate;
         private bool wasVerticalInputDownDuringPreviousUpdate;
         private bool wasUseInputDownDuringPreviousUpdate;
         private bool wasRunInputDownDuringPreviousUpdate;
-        private bool isActivationFadeCoroutineRunning;
+        private bool isActivationCoroutineRunning;
+        private bool hasDialogDisplayFinishedDisplayingAllSnippets; // Whether the menu dialog display has finished displaying all the current snippets and is awaiting user input to proceed.
         private int currentlySelectedMenuTileIndex; // The index of the currently selected menu tile within the group that is currently on the top of the menu groups stack.
 
-        private IEnumerator ActivateMenuCoroutine(MenuActivationMode activationMode)
+        private IEnumerator ActivateMenuInDefaultModeCoroutine()
         {
-            isActivationFadeCoroutineRunning = true;
+            isActivationCoroutineRunning = true;
 
-            ScenePauseHandler.PauseScene();            
+            ScenePauseHandler.PauseScene();
 
             // Fades the activation fade image from clear to opaque.           
             FadeHandler.FadeToColor(Color.black, ActivationFadeDuration / 2.0f);
@@ -84,26 +100,56 @@ namespace SurvivalHorrorFramework
 
             BackgroundImage.gameObject.SetActive(true);
 
-            if (activationMode == MenuActivationMode.Default)
-            {
-                SetParentMenuTileGroup(DefaultParentMenuTileGroup);
-            }
-            else if (activationMode == MenuActivationMode.AddItem)
-            {
-                SetParentMenuTileGroup(AddItemParentMenuTileGroup);
-            }
+            SetParentMenuTileGroup(DefaultParentMenuTileGroup);
 
             // Fades the activation fade image back to clear.            
             FadeHandler.FadeToColor(Color.clear, ActivationFadeDuration / 2.0f);
             yield return new WaitForSecondsRealtime(ActivationFadeDuration / 2.0f);
 
             isMenuActive = true;
-            isActivationFadeCoroutineRunning = false;
+            isActivationCoroutineRunning = false;
+        }
+
+        private IEnumerator ActivateMenuInAddItemModeCoroutine(InventoryItem itemToAdd)
+        {
+            isActivationCoroutineRunning = true;
+
+            ScenePauseHandler.PauseScene();
+
+            // Fades the activation fade image from clear to opaque.           
+            FadeHandler.FadeToColor(Color.black, ActivationFadeDuration / 2.0f);
+            yield return new WaitForSecondsRealtime(ActivationFadeDuration / 2.0f);
+
+            BackgroundImage.gameObject.SetActive(true);
+
+            // Fades the activation fade image back to clear.            
+            FadeHandler.FadeToColor(Color.clear, ActivationFadeDuration / 2.0f);
+            yield return new WaitForSecondsRealtime(ActivationFadeDuration / 2.0f);
+
+            // Displays the 3D model which represents the item to be added.
+            SceneInventoryItemCamera.DisplayInventoryItem(itemToAdd);
+            yield return new WaitForSecondsRealtime(SceneInventoryItemCamera.InventoryItemDisplayCoroutineDuration);
+
+            // Displays dialog asking the player whether they want to add the item to their inventory or not.
+            Dialog AddItemDialog = Instantiate(AddItemDialogTemplate);
+            AddItemDialog.DisplayedText += itemToAdd.Name + '?';
+            MenuDialogDisplay.PauseSceneAndDisplayDialog(AddItemDialog);
+            hasDialogDisplayFinishedDisplayingAllSnippets = false;
+            while (!hasDialogDisplayFinishedDisplayingAllSnippets)
+            {
+                yield return new WaitForEndOfFrame();
+            }
+
+            // Activates the 'yes' and 'no' menu tiles so the player can choose whether to add the item to their inventory.
+            SetParentMenuTileGroup(AddItemParentMenuTileGroup);
+
+            isMenuActive = true;
+            isActivationCoroutineRunning = false;
         }
 
         private IEnumerator DeactivateMenuCoroutine()
         {
-            isActivationFadeCoroutineRunning = true;
+            isActivationCoroutineRunning = true;
 
             audioSourceComponent.PlayOneShot(GoBackInMenuSound);
 
@@ -120,7 +166,7 @@ namespace SurvivalHorrorFramework
             ScenePauseHandler.UnpauseScene();
 
             isMenuActive = false;
-            isActivationFadeCoroutineRunning = false;
+            isActivationCoroutineRunning = false;
         }
 
         private void Awake()
@@ -130,6 +176,8 @@ namespace SurvivalHorrorFramework
             BackgroundImage.gameObject.SetActive(false);
 
             isMenuActive = false;
+
+            MenuDialogDisplay.OnAllDialogSnippetsDisplayCompleted += SetDialogDisplayFinishedDisplayingAllSnippetsFlagToTrue;
         }
 
         private void Start()
@@ -144,9 +192,9 @@ namespace SurvivalHorrorFramework
             {
                 if (!isMenuActive)
                 {
-                    ActivateMenu(MenuActivationMode.Default);
+                    ActivateMenuInDefaultMode();
                 }
-                else
+                else if (currentMenuMode == MenuMode.Default)
                 {
                     DeactivateMenu();
                 }
@@ -197,7 +245,7 @@ namespace SurvivalHorrorFramework
 
                 menuTileGroups.Peek()[currentlySelectedMenuTileIndex].ActivateTile(this);
             }
-            // Else if the 'Run' input has been pressed, pops the current menu group or deactivates the menu if there are is only one group remaining in the stack.
+            // Else if the 'Run' input has been pressed, pops the current menu group or deactivates the menu if there are is only one group remaining in the stack and the menu mode is 'default'.
             else if (Input.GetAxis("Run") == 1.0f && !wasRunInputDownDuringPreviousUpdate)
             {
                 audioSourceComponent.PlayOneShot(GoBackInMenuSound);
@@ -206,7 +254,7 @@ namespace SurvivalHorrorFramework
                 {
                     PopMenuTileGroup();
                 }
-                else
+                else if (currentMenuMode == MenuMode.Default)
                 {
                     DeactivateMenu();
                 }
@@ -224,7 +272,7 @@ namespace SurvivalHorrorFramework
             for (int i = 0; i < menuTileGroups.Count; ++i)
             {
                 PopMenuTileGroup();
-            }            
+            }
 
             PushMenuTileGroup(parentTileGroup);
         }
@@ -265,6 +313,11 @@ namespace SurvivalHorrorFramework
             {
                 SetSelectedMenuTile(menuTileGroups.Peek()[0]);
             }
+        }
+
+        private void SetDialogDisplayFinishedDisplayingAllSnippetsFlagToTrue()
+        {
+            hasDialogDisplayFinishedDisplayingAllSnippets = true;
         }
     }
 }

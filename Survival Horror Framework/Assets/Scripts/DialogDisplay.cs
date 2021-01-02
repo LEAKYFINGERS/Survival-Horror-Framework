@@ -1,7 +1,7 @@
 ﻿////////////////////////////////////////
 // Author:              LEAKYFINGERS
 // Date created:        24.11.20
-// Date last edited:    28.11.20
+// Date last edited:    02.01.21
 // Reference/s:         https://repo.ijs.si/eHeritage/3DInstitute/blob/master/Assets/TextMesh%20Pro/Examples/Scripts/VertexColorCycler.cs
 ////////////////////////////////////////
 using System.Collections;
@@ -16,6 +16,9 @@ namespace SurvivalHorrorFramework
     // The script used to handle the canvas and UI text object which display dialog text to the player.
     public class DialogDisplay : MonoBehaviour
     {
+        public delegate void DialogDisplayEventHandler();
+
+        public event DialogDisplayEventHandler OnAllDialogSnippetsDisplayCompleted; // Called when all of the dialog snippets have finished being displayed and the dialog display is awaiting player input.
         public PauseHandler ScenePauseHandler;
         public TextMeshProUGUI UIText;
 
@@ -43,9 +46,9 @@ namespace SurvivalHorrorFramework
 
             // Divides the dialog into individual 'snippets' seperated by a tilde character which are each displayed one at a time in sequence.
             string[] dialogSnippets = dialog.DisplayedText.Split('~'); 
-            foreach (string dialogSnippet in dialogSnippets)
+            for(int i = 0; i < dialogSnippets.Length; ++i)
             {
-                UIText.text = dialogSnippet.Trim(); // Trims the text to remove any whitespace at the beginning or end.
+                UIText.text = dialogSnippets[i].Trim(); // Trims the text to remove any whitespace at the beginning or end.
                 UIText.ForceMeshUpdate(); // Updates the mesh of the UIText so that all of the textInfo values will be accurate.
                 TMP_TextInfo textInfo = UIText.textInfo;
 
@@ -65,6 +68,11 @@ namespace SurvivalHorrorFramework
                         yield return new WaitForSecondsRealtime(Input.GetAxis("Use") == 1.0f || Input.GetAxis("Run") == 1.0f ? dialog.FastCharacterRevealInterval : dialog.DefaultCharacterRevealInterval); // Adjusts the speed of the character reveal according to whether any inputs are being held
                     }
                     SetAllUITextCharactersTransparency(textInfo, 255);
+                }
+
+                if(i == dialogSnippets.Length - 1 && OnAllDialogSnippetsDisplayCompleted != null)
+                {
+                    OnAllDialogSnippetsDisplayCompleted.Invoke();
                 }
 
                 // Pauses to wait for the player to press either the 'Use' or 'Run' inputs before the dialog text disappears and the scene unpauses. 

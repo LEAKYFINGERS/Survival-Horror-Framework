@@ -14,5 +14,6 @@ namespace SurvivalHorrorFramework
     public class InventoryItem : ScriptableObject
     {
         public Transform ModelPrefab; // The prefab used to spawn the model which can be viewed and manipulated by the player.
+        public string Name = "<color=#188E26>Inventory Item</color>";
     }
 }

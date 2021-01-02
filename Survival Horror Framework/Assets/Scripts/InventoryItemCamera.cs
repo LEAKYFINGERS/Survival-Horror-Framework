@@ -1,12 +1,12 @@
 ﻿////////////////////////////////////////
 // Author:              LEAKYFINGERS
 // Date created:        29.12.20
-// Date last edited:    29.12.20
+// Date last edited:    02.01.21
 ////////////////////////////////////////
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 namespace SurvivalHorrorFramework
 {
@@ -14,57 +14,129 @@ namespace SurvivalHorrorFramework
     [RequireComponent(typeof(Camera))]
     public class InventoryItemCamera : MonoBehaviour
     {
-        public InventoryItem TestInventoryItem;
-        public float ItemSpinDuration = 1.5f;
+        public Image FadeImage; // The UI image placed in front of the camera used to create a 'fade' effect when an inventory item appears/disappears by changing the opacity.
+        public Vector3 InventoryItemDisplayCoroutineSpawnRotation = new Vector3(720.0f, 720.0f, 0.0f); // The local rotation of the displayed inventory items which will lerp towards the local rotation value of the 3D model prefab when they move in front of the camera - used to create the classic 'item appear spin effect'.
+        public float InventoryItemDisplayCoroutineDuration = 1.5f; // The duration of the spinning 'animations' which play when an inventory item starts/stops being displayed.
+        public float InventoryItemDisplayCoroutineSpawnDistanceFromCamera = 10.0f; // The local distance from the inventory item camera at which the inventory item spawns before being displayed/despawns after being displayed.        
 
-        public void StartDisplayingInventoryItem(InventoryItem inventoryItem)
+        public bool IsDisplayingAnInventoryItem
         {
-            if(currentlyisplayedInventoryItem || isItemSpinCoroutineRunning)
+            get { return currentlyDisplayedInventoryItem != null; }
+        }
+
+        // Initialises a coroutine which spawns the 3D model representing the specified inventory item and moves it in front of the inventory item camera to be displayed at the local position and rotation of the 3D model prefab.
+        public void DisplayInventoryItem(InventoryItem inventoryItem)
+        {
+            if(currentlyDisplayedInventoryItem || isItemDisplayHandlingCoroutineRunning)
             {
-                throw new System.Exception("Cannot display inventory item " + inventoryItem.name + " because inventory item " + currentlyisplayedInventoryItem.name + " is already being displayed.");
+                throw new System.Exception("Cannot display inventory item " + inventoryItem.name + " because inventory item " + currentlyDisplayedInventoryItem.name + " is already being displayed.");
             }
             else
             {
-                StartCoroutine("ItemAppearSpinCoroutine", inventoryItem);
+                StartCoroutine("StartDisplayingItemCoroutine", inventoryItem);
+            }
+        }
+
+        // Initialises a coroutine which removes the currently displayed 3D model of an inventory item from the view of the inventory item camera and destroys it. 
+        public void StopDisplayingInventoryItem()
+        {
+            if(!currentlyDisplayedInventoryItem)
+            {
+                Debug.Log("StopDisplayingInventoryItem() has been called on " + name + " but no inventory items are currently being displayed.");
+            }
+            else if(!isItemDisplayHandlingCoroutineRunning)
+            {
+                StartCoroutine("StopDisplayingItemCoroutine");
             }
         }
 
 
-        private Transform currentlyisplayedInventoryItem;
-        private bool isItemSpinCoroutineRunning;
+        private Color fadeImageColor; // The color of the fade image at the beginning of the scene.
+        private Transform currentlyDisplayedInventoryItem;
+        private bool isItemDisplayHandlingCoroutineRunning;
 
-        private IEnumerator ItemAppearSpinCoroutine(InventoryItem inventoryItem)
+        // A corutine which spawns the 3D model representing the specified inventory item and moves it from a set distance/rotation into the view of the camera offset according to the local position/rotation of the 3D model prefab.
+        private IEnumerator StartDisplayingItemCoroutine(InventoryItem inventoryItem)
         {
-            isItemSpinCoroutineRunning = true;
+            isItemDisplayHandlingCoroutineRunning = true;
 
-            currentlyisplayedInventoryItem = Instantiate(inventoryItem.ModelPrefab, this.transform);
+            currentlyDisplayedInventoryItem = Instantiate(inventoryItem.ModelPrefab, this.transform);
 
-            Vector3 startingLocalPos = new Vector3(0.0f, 0.0f, 10.0f);
-            Vector3 startingLocalRotation = new Vector3(0.0f, 0.0f, 0.0f);
-            Vector3 endingLocalPos = new Vector3(0.0f, 0.0f, 2.0f);
-            Vector3 endingLocalRotation = new Vector3(0.0f, 1080.0f, 0.0f);
+            Vector3 startingLocalPos = new Vector3(0.0f, 0.0f, InventoryItemDisplayCoroutineSpawnDistanceFromCamera);
+            Vector3 startingLocalRotation = InventoryItemDisplayCoroutineSpawnRotation;
+            Vector3 endingLocalPos = new Vector3(0.0f, 0.0f, currentlyDisplayedInventoryItem.localPosition.z);
+            Vector3 endingLocalRotation = currentlyDisplayedInventoryItem.localRotation.eulerAngles;
             float timer = 0.0f;
-            while(timer < ItemSpinDuration)
+            while(timer < InventoryItemDisplayCoroutineDuration)
             {
-                currentlyisplayedInventoryItem.transform.localPosition = Vector3.Lerp(startingLocalPos, endingLocalPos, timer / ItemSpinDuration);
-                currentlyisplayedInventoryItem.transform.localRotation = Quaternion.Euler(Vector3.Lerp(startingLocalRotation, endingLocalRotation, timer / ItemSpinDuration));
+                FadeImage.color = Color.Lerp(fadeImageColor, Color.clear, timer / InventoryItemDisplayCoroutineDuration);
+
+                currentlyDisplayedInventoryItem.transform.localPosition = Vector3.Lerp(startingLocalPos, endingLocalPos, timer / InventoryItemDisplayCoroutineDuration);
+                currentlyDisplayedInventoryItem.transform.localRotation = Quaternion.Euler(Vector3.Lerp(startingLocalRotation, endingLocalRotation, timer / InventoryItemDisplayCoroutineDuration));
 
                 timer += Time.deltaTime;
                 yield return null;
             }
-            currentlyisplayedInventoryItem.localPosition = endingLocalPos;                                  
+            currentlyDisplayedInventoryItem.localPosition = endingLocalPos;                                  
 
-            isItemSpinCoroutineRunning = false;
+            isItemDisplayHandlingCoroutineRunning = false;
         }
 
-        private void Update()
+        // A corutine moves the currently displayed 3D model of an inventory item from in front of the camera to a set distance/rotation before destroying it.
+        private IEnumerator StopDisplayingItemCoroutine()
         {
-            if(Input.GetKeyDown(KeyCode.I) && !currentlyisplayedInventoryItem) // DEBUG
+            isItemDisplayHandlingCoroutineRunning = true;
+
+            Vector3 startingLocalPos = currentlyDisplayedInventoryItem.localPosition;
+            Vector3 startingLocalRotation = currentlyDisplayedInventoryItem.localRotation.eulerAngles;
+            Vector3 endingLocalPos = new Vector3(0.0f, 0.0f, InventoryItemDisplayCoroutineSpawnDistanceFromCamera);
+            Vector3 endingLocalRotation = InventoryItemDisplayCoroutineSpawnRotation;
+            float timer = 0.0f;
+            while (timer < InventoryItemDisplayCoroutineDuration)
             {
-                StartDisplayingInventoryItem(TestInventoryItem);
+                FadeImage.color = Color.Lerp(Color.clear, fadeImageColor, timer / InventoryItemDisplayCoroutineDuration);
+
+                currentlyDisplayedInventoryItem.transform.localPosition = Vector3.Lerp(startingLocalPos, endingLocalPos, timer / InventoryItemDisplayCoroutineDuration);
+                currentlyDisplayedInventoryItem.transform.localRotation = Quaternion.Euler(Vector3.Lerp(startingLocalRotation, endingLocalRotation, timer / InventoryItemDisplayCoroutineDuration));
+
+                timer += Time.deltaTime;
+                yield return null;
             }
+
+            Destroy(currentlyDisplayedInventoryItem.gameObject);
+
+            isItemDisplayHandlingCoroutineRunning = false;
         }
 
+        //private IEnumerator DisplayItemCoroutine(InventoryItem inventoryItem)
+        //{
+        //    isItemSpinCoroutineRunning = true;
+
+        //    currentlyisplayedInventoryItem = Instantiate(inventoryItem.ModelPrefab, this.transform);
+
+        //    Vector3 startingLocalPos = new Vector3(0.0f, 0.0f, 10.0f);
+        //    Vector3 startingLocalRotation = new Vector3(0.0f, 0.0f, 0.0f);
+        //    Vector3 endingLocalPos = new Vector3(0.0f, 0.0f, 2.0f);
+        //    Vector3 endingLocalRotation = new Vector3(0.0f, 1080.0f, 0.0f);
+        //    float timer = 0.0f;
+        //    while (timer < ItemSpinDuration)
+        //    {
+        //        currentlyisplayedInventoryItem.transform.localPosition = Vector3.Lerp(startingLocalPos, endingLocalPos, timer / ItemSpinDuration);
+        //        currentlyisplayedInventoryItem.transform.localRotation = Quaternion.Euler(Vector3.Lerp(startingLocalRotation, endingLocalRotation, timer / ItemSpinDuration));
+
+        //        timer += Time.deltaTime;
+        //        yield return null;
+        //    }
+        //    currentlyisplayedInventoryItem.localPosition = endingLocalPos;
+
+        //    isItemSpinCoroutineRunning = false;
+        //}
+
+        private void Awake()
+        {
+            fadeImageColor = FadeImage.color;
+        }
+        
         //public ColorTintPostProcessHandler FadeHandler;
         ////public FixedCameraHandler SceneFixedCameraHandler;
         ////public PauseHandler ScenePauseHandler;
