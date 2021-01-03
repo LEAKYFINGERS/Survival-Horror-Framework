@@ -1,7 +1,7 @@
 ﻿////////////////////////////////////////
 // Author:              LEAKYFINGERS
 // Date created:        16.11.20
-// Date last edited:    02.01.21
+// Date last edited:    03.01.21
 ////////////////////////////////////////
 using System.Collections;
 using System.Collections.Generic;
@@ -29,6 +29,7 @@ namespace SurvivalHorrorFramework
         public DialogDisplay MenuDialogDisplay; 
         public Image BackgroundImage;
         public InventoryItemCamera SceneInventoryItemCamera; // The camera used to render the 3D models which represent inventory items within the menu.
+        public InventoryTile[] InventoryTiles; // An array pointing to the inventory tiles used to store the inventory items currently possessed by the player.
         public List<MenuTile> DefaultParentMenuTileGroup; // The initial group of menu tiles which are pushed onto the stack of menu tile groups when the menu is activated normally.
         public List<MenuTile> AddItemParentMenuTileGroup; // The initial group of menu tiles which are pushed onto the stack of menu tile groups when an item is to be added to the menu inventory.
         public PauseHandler ScenePauseHandler;
@@ -71,6 +72,25 @@ namespace SurvivalHorrorFramework
                 menuTile.IsEnabled = true;
             }
             SetSelectedMenuTile(menuTileGroups.Peek()[0]);
+        }
+
+        // TODO
+        public bool TryAddItemToPlayerInventory(InventoryItem itemToAdd)
+        {
+            bool itemAdded = false;
+            foreach(InventoryTile inventoryTile in InventoryTiles)
+            {
+                if(inventoryTile.IsEmpty)
+                {
+                    inventoryTile.StoreInventoryItem(itemToAdd);
+                    itemAdded = true;
+                    break;
+                }
+            }
+
+            return itemAdded;
+
+            //Debug.Log(itemToAdd.name + " successfully added to the player inventory.");
         }
 
 
@@ -142,6 +162,15 @@ namespace SurvivalHorrorFramework
 
             // Activates the 'yes' and 'no' menu tiles so the player can choose whether to add the item to their inventory.
             SetParentMenuTileGroup(AddItemParentMenuTileGroup);
+            // Stores the inventory item to be added in the 'confirm/yes' button so that it can call TryAddItemToPlayerInventory() when activated.
+            foreach (MenuTile menuTile in menuTileGroups.Peek())
+            {
+                if(menuTile.gameObject.GetComponent<ConfirmAddItemMenuTile>())
+                {
+                    menuTile.gameObject.GetComponent<ConfirmAddItemMenuTile>().ItemToAdd = itemToAdd;
+                    break;
+                }
+            }
 
             isMenuActive = true;
             isActivationCoroutineRunning = false;
@@ -153,10 +182,20 @@ namespace SurvivalHorrorFramework
 
             audioSourceComponent.PlayOneShot(GoBackInMenuSound);
 
+            // If the 'add item' dialog is currently being displayed, removes the 'yes' and 'no' tiles and stops displaying the inventory item before continuing to deactivate the menu.
+            if(currentMenuMode == MenuMode.AddItem && SceneInventoryItemCamera.IsDisplayingAnInventoryItem)
+            {
+                PopMenuTileGroup();
+
+                SceneInventoryItemCamera.StopDisplayingInventoryItem();
+                yield return new WaitForSecondsRealtime(SceneInventoryItemCamera.InventoryItemDisplayCoroutineDuration);
+            }
+
             // Fades the activation fade image from clear to opaque.           
             FadeHandler.FadeToColor(Color.black, ActivationFadeDuration / 2.0f);
             yield return new WaitForSecondsRealtime(ActivationFadeDuration / 2.0f);
-
+            
+            PopAndDeselectAllMenuTileGroups();            
             BackgroundImage.gameObject.SetActive(false);
 
             // Fades the activation fade image back to clear.            
@@ -217,6 +256,11 @@ namespace SurvivalHorrorFramework
 
         private void UpdateMenuTiles()
         {
+            if(menuTileGroups.Count == 0)
+            {
+                return;
+            }
+
             // Updates which is the currently selected menu tile according to the player selection inputs.
             if (Input.GetAxis("Horizontal") == -1.0f && !wasHorizontalInputDownDuringPreviousUpdate && menuTileGroups.Peek()[currentlySelectedMenuTileIndex].TileToLeft && menuTileGroups.Peek()[currentlySelectedMenuTileIndex].TileToLeft.IsEnabled)
             {
@@ -254,7 +298,7 @@ namespace SurvivalHorrorFramework
                 {
                     PopMenuTileGroup();
                 }
-                else if (currentMenuMode == MenuMode.Default)
+                else 
                 {
                     DeactivateMenu();
                 }
@@ -283,25 +327,42 @@ namespace SurvivalHorrorFramework
             for (int i = 0; i < menuTileGroups.Peek().Count; ++i)
             {
                 if (menuTileGroups.Peek()[i] == menuTile)
-                {
-                    menuTileGroups.Peek()[currentlySelectedMenuTileIndex].IsSelected = false;
-
+                {                   
                     menuTileGroups.Peek()[i].IsSelected = true;
                     currentlySelectedMenuTileIndex = i;
 
                     if (playSoundEffect)
                     {
                         audioSourceComponent.PlayOneShot(ChangeSelectedTileSound);
-                    }
-
-                    break;
+                    }                    
                 }
+                else
+                {
+                    menuTileGroups.Peek()[i].IsSelected = false;
+                }
+            }
+        }
+
+        private void PopAndDeselectAllMenuTileGroups()
+        {
+            while(menuTileGroups.Count > 0)
+            {
+                foreach(MenuTile menuTile in menuTileGroups.Peek())
+                {
+                    menuTile.IsSelected = false;
+                }
+                PopMenuTileGroup();
             }
         }
 
         // Pops the menu tile group which forms the current interactive 'layer' of the menu off the stack so that the tiles in the next 'layer' down become active.
         private void PopMenuTileGroup()
         {
+            if(menuTileGroups.Count == 0)
+            {
+                return;
+            }
+
             SetSelectedMenuTile(menuTileGroups.Peek()[0]);
             foreach (MenuTile menuTile in menuTileGroups.Peek())
             {
@@ -313,7 +374,7 @@ namespace SurvivalHorrorFramework
             {
                 SetSelectedMenuTile(menuTileGroups.Peek()[0]);
             }
-        }
+        }        
 
         private void SetDialogDisplayFinishedDisplayingAllSnippetsFlagToTrue()
         {

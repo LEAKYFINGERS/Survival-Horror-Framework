@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96d916d8595f92a41b8ae4a3605400d0, type: 3}
   m_Name: Cube Inventory Item
   m_EditorClassIdentifier: 
+  InventoryTileSprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
   ModelPrefab: {fileID: 7878713674086844160, guid: a7e274f6a44120e42b6f35fd74487110,
     type: 3}
   Name: <color=#188E26>Cube</color>

@@ -1,7 +1,7 @@
 ﻿////////////////////////////////////////
 // Author:              LEAKYFINGERS
 // Date created:        17.11.20
-// Date last edited:    28.11.20
+// Date last edited:    03.01.21
 ////////////////////////////////////////
 using System.Collections;
 using System.Collections.Generic;
@@ -43,9 +43,10 @@ namespace SurvivalHorrorFramework
                     for(int i = 0; i < transform.childCount; ++i)
                     {
                         transform.GetChild(i).gameObject.SetActive(false);
-                    }
+                    }                    
                 }
 
+                IsSelected = false;
                 isEnabled = value;
             }
         }
@@ -80,7 +81,7 @@ namespace SurvivalHorrorFramework
         protected bool isEnabled;
         protected bool isSelected;
 
-        protected void Awake()
+        protected virtual void Awake()
         {
             imageComponent = GetComponent<Image>();
 
