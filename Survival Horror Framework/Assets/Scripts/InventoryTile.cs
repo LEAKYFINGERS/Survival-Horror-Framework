@@ -1,7 +1,7 @@
 ﻿////////////////////////////////////////
 // Author:              LEAKYFINGERS
 // Date created:        28.11.20
-// Date last edited:    28.11.20
+// Date last edited:    11.01.21
 ////////////////////////////////////////
 using System.Collections;
 using System.Collections.Generic;
@@ -20,11 +20,13 @@ namespace SurvivalHorrorFramework
             get { return storedInventoryItem == null; }
         }
 
+        // Pushes the child menu tile group to be the current set of menu tiles when activated.
         public override void ActivateTile(GameMenu gameMenu)
         {
             base.ActivateTile(gameMenu);
         }
 
+        // If empty, stores the specified inventory item in this inventory tile.
         public void StoreInventoryItem(InventoryItem item)
         {
             if(!IsEmpty)
@@ -47,8 +49,6 @@ namespace SurvivalHorrorFramework
         }
 
 
-        private InventoryItem storedInventoryItem;
-
-        
+        private InventoryItem storedInventoryItem;        
     }
 }

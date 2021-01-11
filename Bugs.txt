@@ -1,0 +1,1 @@
+- Selected tile reverts to index of 0 when popping any menu tile group - means that when 'EQUIP/EXAMINE/COMBN' group is popped, selected inventory tile always reverts to upper-left

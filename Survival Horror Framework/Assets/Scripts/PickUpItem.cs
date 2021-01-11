@@ -17,7 +17,7 @@ namespace SurvivalHorrorFramework
 
         public override void Interact()
         {
-            SceneGameMenu.ActivateMenuInAddItemMode(InventoryRepresentation);
+            SceneGameMenu.ActivateMenuAndTryToAddItem(this);
         }
     }
 }

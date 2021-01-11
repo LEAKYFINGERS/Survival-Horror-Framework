@@ -1,7 +1,7 @@
 ﻿////////////////////////////////////////
 // Author:              LEAKYFINGERS
 // Date created:        23.11.20
-// Date last edited:    23.11.20
+// Date last edited:    11.01.21
 ////////////////////////////////////////
 using System.Collections;
 using System.Collections.Generic;
@@ -44,6 +44,19 @@ namespace SurvivalHorrorFramework
         private void Awake()
         {
             interactiveObjectsWithinBounds = new List<InteractiveObject>();
+        }
+
+        private void Update()
+        {
+            // Checks to ensure any interactive objects which have been destroyed are removed from the list.
+            for (int i = 0; i < interactiveObjectsWithinBounds.Count; ++i)
+            {
+                if (interactiveObjectsWithinBounds[i] == null)
+                {
+                    interactiveObjectsWithinBounds.RemoveAt(i);
+                    break;
+                }
+            }
         }
 
         private void OnTriggerEnter(Collider other)
