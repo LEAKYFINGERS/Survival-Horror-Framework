@@ -86,6 +86,7 @@
     <Compile Include="Assets\Scripts\FootstepFloorTextures.cs" />
     <Compile Include="Assets\Scripts\Dialog.cs" />
     <Compile Include="Assets\Scripts\FixedCamera.cs" />
+    <Compile Include="Assets\Scripts\CheckitemMenuTile.cs" />
   </ItemGroup>
   <ItemGroup>
      <None Include="Assets\Third-Party\Retro 3D Shader Pack for Unity\Shaders\CG_Includes\RetroFlatLit.cginc" />

@@ -35,6 +35,15 @@ namespace SurvivalHorrorFramework
             }
         }
 
+        public void DisplayBasicText(string text)
+        {
+            if (!isDisplayDialogCoroutineRunning)
+            {
+                UIText.enabled = true;
+                UIText.text = text;
+            }
+        }
+
 
         private bool isDisplayDialogCoroutineRunning;
 

@@ -1,7 +1,7 @@
 ﻿////////////////////////////////////////
 // Author:              LEAKYFINGERS
 // Date created:        16.11.20
-// Date last edited:    03.01.21
+// Date last edited:    12.01.21
 ////////////////////////////////////////
 using System.Collections;
 using System.Collections.Generic;
@@ -19,7 +19,8 @@ namespace SurvivalHorrorFramework
         {
             Default,
             PickUpItem,
-            InventoryFull
+            InventoryFull,
+            CheckInventoryItem
         }
 
         public AudioClip ActivateSelectedTileSound;
@@ -53,53 +54,6 @@ namespace SurvivalHorrorFramework
             }
         }
 
-        // Activates the menu in the default mode if the scene isn't already currently paused.
-        public void ActivateMenuInDefaultMode()
-        {
-            if (!isMenuActive && !ScenePauseHandler.IsScenePaused && !isActivationCoroutineRunning)
-            {
-                currentMenuMode = MenuMode.Default;
-                StartCoroutine("ActivateMenuInDefaultModeCoroutine");
-            }
-        }
-
-        // If at least one inventory tile is empty activates the menu and allows the player to choose to add the specified PickUpItem to their inventory, else if the inventory is full activates it in a manner that tells the player it is full before exiting.
-        public void ActivateMenuAndTryToAddItem(PickupItem pickUpItem)
-        {
-            if (!isMenuActive && !ScenePauseHandler.IsScenePaused && !isActivationCoroutineRunning)
-            {
-                if (!IsInventoryFull)
-                {
-                    currentMenuMode = MenuMode.PickUpItem;
-                    StartCoroutine("ActivateMenuInPickUpItemModeCoroutine", pickUpItem);
-                }
-                else
-                {
-                    currentMenuMode = MenuMode.InventoryFull;
-                    StartCoroutine("ActivateMenuInInventoryFullModeCoroutine", pickUpItem);
-                }
-            }
-        }
-
-        public void DeactivateMenu()
-        {
-            if (isMenuActive && ScenePauseHandler.IsScenePaused && !isActivationCoroutineRunning)
-            {
-                StartCoroutine("DeactivateMenuCoroutine");
-            }
-        }
-
-        // Pushes the specified menu tile group onto the stack and sets it as the current interactive 'layer' of the menu.
-        public void PushMenuTileGroup(List<MenuTile> menuTileGroup)
-        {
-            menuTileGroups.Push(menuTileGroup);
-            foreach (MenuTile menuTile in menuTileGroups.Peek())
-            {
-                menuTile.IsEnabled = true;
-            }
-            SetSelectedMenuTile(menuTileGroups.Peek()[0]);
-        }
-
         // Attempts to add the specified item to one of the inventory tiles in the menu - returns 'true' if successful, else if the inventory is full returns 'false'.
         public bool TryAddItemToPlayerInventory(InventoryItem itemToAdd)
         {
@@ -117,6 +71,65 @@ namespace SurvivalHorrorFramework
             return itemAdded;
         }
 
+        // Activates the menu in the default mode if the scene isn't already currently paused.
+        public void ActivateMenuInDefaultMode()
+        {
+            if (!isMenuActive && !ScenePauseHandler.IsScenePaused && !isMenuProcessCoroutineRunning)
+            {
+                currentMenuMode = MenuMode.Default;
+                StartCoroutine("ActivateMenuInDefaultModeCoroutine");
+            }
+        }
+
+        // If at least one inventory tile is empty activates the menu and allows the player to choose to add the specified PickUpItem to their inventory, else if the inventory is full activates it in a manner that tells the player it is full before exiting.
+        public void ActivateMenuAndTryToAddItem(PickupItem pickUpItem)
+        {
+            if (!isMenuActive && !ScenePauseHandler.IsScenePaused && !isMenuProcessCoroutineRunning)
+            {
+                if (!IsInventoryFull)
+                {
+                    currentMenuMode = MenuMode.PickUpItem;
+                    StartCoroutine("ActivateMenuInPickUpItemModeCoroutine", pickUpItem);
+                }
+                else
+                {
+                    currentMenuMode = MenuMode.InventoryFull;
+                    StartCoroutine("ActivateMenuInInventoryFullModeCoroutine", pickUpItem);
+                }
+            }
+        }
+
+        public void BeginCheckInventoryItemProcess(InventoryItem inventoryItem)
+        {
+            if (isMenuActive && currentMenuMode == MenuMode.Default && !isMenuProcessCoroutineRunning)
+            {
+                currentMenuMode = MenuMode.CheckInventoryItem;
+                StartCoroutine("CheckInventoryItemCoroutine", inventoryItem);
+            }
+        }
+
+        public void DeactivateMenu()
+        {
+            if (isMenuActive && ScenePauseHandler.IsScenePaused && !isMenuProcessCoroutineRunning)
+            {
+                StartCoroutine("DeactivateMenuCoroutine");
+            }
+        }
+
+        // Pushes the specified menu tile group onto the stack and sets it as the current interactive 'layer' of the menu and selects the first tile in the list.
+        public void PushMenuTileGroup(List<MenuTile> menuTileGroup)
+        {
+            menuTileGroups.Push(menuTileGroup);
+            foreach (MenuTile menuTile in menuTileGroups.Peek())
+            {
+                menuTile.IsEnabled = true;
+            }
+            SetSelectedMenuTile(menuTileGroups.Peek()[0]);
+        }
+              
+
+        
+
 
         private AudioSource audioSourceComponent;
         private Color activationFadeImageColor; // The initial color tint of the activation fade image - stored so the image can transition between this color and completely transparent.
@@ -128,13 +141,13 @@ namespace SurvivalHorrorFramework
         private bool wasVerticalInputDownDuringPreviousUpdate;
         private bool wasUseInputDownDuringPreviousUpdate;
         private bool wasRunInputDownDuringPreviousUpdate;
-        private bool isActivationCoroutineRunning;
+        private bool isMenuProcessCoroutineRunning; // A flag used to specify whether the menu is currently running in it's default state or is going through some sequential process handled by a coroutine (activating, viewing an item, deactivation, etc.)
         private bool hasDialogDisplayFinishedDisplayingAllSnippets; // Whether the menu dialog display has finished displaying all the current snippets and is awaiting user input to proceed.
         private int currentlySelectedMenuTileIndex; // The index of the currently selected menu tile within the group that is currently on the top of the menu groups stack.
 
         private IEnumerator ActivateMenuInDefaultModeCoroutine()
         {
-            isActivationCoroutineRunning = true;
+            isMenuProcessCoroutineRunning = true;
 
             ScenePauseHandler.PauseScene();
 
@@ -150,13 +163,14 @@ namespace SurvivalHorrorFramework
             FadeHandler.FadeToColor(Color.clear, ActivationFadeDuration / 2.0f);
             yield return new WaitForSecondsRealtime(ActivationFadeDuration / 2.0f);
 
+            MenuDialogDisplay.UIText.enabled = true;
             isMenuActive = true;
-            isActivationCoroutineRunning = false;
+            isMenuProcessCoroutineRunning = false;
         }
 
         private IEnumerator ActivateMenuInPickUpItemModeCoroutine(PickupItem pickUpItem)
         {
-            isActivationCoroutineRunning = true;
+            isMenuProcessCoroutineRunning = true;
 
             ScenePauseHandler.PauseScene();
 
@@ -196,13 +210,14 @@ namespace SurvivalHorrorFramework
                 }
             }
 
+            MenuDialogDisplay.UIText.enabled = true;
             isMenuActive = true;
-            isActivationCoroutineRunning = false;
+            isMenuProcessCoroutineRunning = false;
         }
 
         private IEnumerator ActivateMenuInInventoryFullModeCoroutine(PickupItem pickUpItem)
         {
-            isActivationCoroutineRunning = true;
+            isMenuProcessCoroutineRunning = true;
 
             ScenePauseHandler.PauseScene();
 
@@ -240,13 +255,76 @@ namespace SurvivalHorrorFramework
             //    }
             //}
 
+            MenuDialogDisplay.UIText.enabled = true;
             isMenuActive = true;
-            isActivationCoroutineRunning = false;
+            isMenuProcessCoroutineRunning = false;
+        }
+
+        private IEnumerator CheckInventoryItemCoroutine(InventoryItem inventoryItem)
+        {
+            isMenuProcessCoroutineRunning = true;
+
+            List<MenuTile> itemInteractionMenuTileGroup = menuTileGroups.Peek();
+            PopMenuTileGroup();
+
+            // Displays the 3D model which represents the item the player is checking.
+            SceneInventoryItemCamera.DisplayInventoryItem(inventoryItem);
+            yield return new WaitForSecondsRealtime(SceneInventoryItemCamera.InventoryItemDisplayCoroutineDuration);
+
+            while (true)
+            {
+                if (Input.GetAxis("Run") == 1.0f && !wasRunInputDownDuringPreviousUpdate)
+                {
+                    break;
+                }
+
+                yield return null;
+            }
+
+            SceneInventoryItemCamera.StopDisplayingInventoryItem();
+            yield return new WaitForSecondsRealtime(SceneInventoryItemCamera.InventoryItemDisplayCoroutineDuration);
+
+            // Pushes the item interaction tiles back as the current menu tile layer and re-selects the 'Check Item' tile.
+            PushMenuTileGroup(itemInteractionMenuTileGroup);
+            foreach(MenuTile itemInteractionMenuTile in itemInteractionMenuTileGroup)
+            {
+                if(itemInteractionMenuTile.GetComponent<CheckitemMenuTile>())
+                {
+                    SetSelectedMenuTile(itemInteractionMenuTile);
+                    break;
+                }
+            }
+
+            isMenuProcessCoroutineRunning = false;
+            currentMenuMode = MenuMode.Default;
+
+
+            //// Displays dialog telling the player that their inventory is already full.
+            //MenuDialogDisplay.PauseSceneAndDisplayDialog(InventoryFullDialog);
+            //hasDialogDisplayFinishedDisplayingAllSnippets = false;
+            //while (!hasDialogDisplayFinishedDisplayingAllSnippets)
+            //{
+            //    yield return new WaitForEndOfFrame();
+            //}
+
+            //// Activates the 'yes' and 'no' menu tiles so the player can choose whether to add the item to their inventory.
+            //SetParentMenuTileGroup(AddItemParentMenuTileGroup);
+            //// Stores the PickUpItem to be added in the 'confirm/yes' menu tile so that it can call TryAddItemToPlayerInventory() when activated.
+            //foreach (MenuTile menuTile in menuTileGroups.Peek())
+            //{
+            //    if (menuTile.gameObject.GetComponent<ConfirmAddItemToInventoryMenuTile>())
+            //    {
+            //        menuTile.gameObject.GetComponent<ConfirmAddItemToInventoryMenuTile>().ItemToAdd = pickUpItem;
+            //        break;
+            //    }
+            //}
+
+
         }
 
         private IEnumerator DeactivateMenuCoroutine()
         {
-            isActivationCoroutineRunning = true;
+            isMenuProcessCoroutineRunning = true;
 
             audioSourceComponent.PlayOneShot(GoBackInMenuSound);
 
@@ -275,8 +353,9 @@ namespace SurvivalHorrorFramework
 
             ScenePauseHandler.UnpauseScene();
 
+            MenuDialogDisplay.UIText.enabled = false;
             isMenuActive = false;
-            isActivationCoroutineRunning = false;
+            isMenuProcessCoroutineRunning = false;
         }
 
         private void Awake()
@@ -285,6 +364,7 @@ namespace SurvivalHorrorFramework
 
             BackgroundImage.gameObject.SetActive(false);
 
+            MenuDialogDisplay.enabled = false;
             isMenuActive = false;
 
             MenuDialogDisplay.OnAllDialogSnippetsDisplayCompleted += SetDialogDisplayFinishedDisplayingAllSnippetsFlagToTrue;
@@ -318,7 +398,7 @@ namespace SurvivalHorrorFramework
                 }
             }
 
-            if (isMenuActive)
+            if (isMenuActive && !isMenuProcessCoroutineRunning && currentMenuMode != MenuMode.CheckInventoryItem)
             {
                 UpdateMenuTiles();
             }
@@ -410,6 +490,20 @@ namespace SurvivalHorrorFramework
                     menuTileGroups.Peek()[i].IsSelected = true;
                     currentlySelectedMenuTileIndex = i;
 
+                    // If the currently selected tile is an inventory tile updates the menu dialog display to show it's name, else clears it.
+                    InventoryTile selectedInventoryTile = menuTileGroups.Peek()[i].GetComponent<InventoryTile>();
+                    if (selectedInventoryTile != null)
+                    {
+                        if(!selectedInventoryTile.IsEmpty)
+                        {
+                            MenuDialogDisplay.DisplayBasicText(selectedInventoryTile.StoredInventoryItemName);
+                        }
+                        else
+                        {
+                            MenuDialogDisplay.DisplayBasicText("");
+                        }
+                    }
+
                     if (playSoundEffect)
                     {
                         audioSourceComponent.PlayOneShot(ChangeSelectedTileSound);
@@ -434,24 +528,32 @@ namespace SurvivalHorrorFramework
             }
         }
 
-        // Pops the menu tile group which forms the current interactive 'layer' of the menu off the stack so that the tiles in the next 'layer' down become active.
+        // Pops the menu tile group which forms the current interactive 'layer' of the menu off the stack so that the tiles in the next 'layer' down become active and sets the currently selected tile to that which had been selected previously in that layer.
         private void PopMenuTileGroup()
         {
             if (menuTileGroups.Count == 0)
             {
                 return;
             }
-
-            SetSelectedMenuTile(menuTileGroups.Peek()[0]);
+            
+            // Disables each of the menu tiles in the current layer and pops it.
             foreach (MenuTile menuTile in menuTileGroups.Peek())
             {
                 menuTile.IsEnabled = false;
             }
             menuTileGroups.Pop();
 
+            // Searches through the menu tiles of the new layer and updates the currently selected tile index to match that of the tile which had been selected previously.
             if (menuTileGroups.Count > 0)
             {
-                SetSelectedMenuTile(menuTileGroups.Peek()[0]);
+                for(int i = 0; i < menuTileGroups.Peek().Count; ++i)
+                {
+                    if(menuTileGroups.Peek()[i].IsSelected)
+                    {
+                        currentlySelectedMenuTileIndex = i;
+                        break;
+                    }
+                }
             }
         }
 

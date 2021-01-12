@@ -1,7 +1,7 @@
 ﻿////////////////////////////////////////
 // Author:              LEAKYFINGERS
 // Date created:        03.01.21
-// Date last edited:    03.01.21
+// Date last edited:    12.01.21
 ////////////////////////////////////////
 using System.Collections;
 using System.Collections.Generic;
@@ -13,24 +13,18 @@ namespace SurvivalHorrorFramework
     public class ConfirmAddItemToInventoryMenuTile : MenuTile
     {
         public PickupItem ItemToAdd; // The item to be destroyed and added to the inventory as an InventoryItem when this menu tile is activated.
-                
+
         public override void ActivateTile(GameMenu gameMenu)
         {
-            if(!ItemToAdd)
+            if (!ItemToAdd)
             {
                 throw new System.Exception("The " + name + " menu tile must have a PickUpItem specified to add to the player inventory before ActivateTile() is called.");
             }
 
             // Tries to add the InventoryItem representation of the PickUpItem to the player inventory - if successful, destroys the PickUpItem and exits the game menu.
-            if (!gameMenu.TryAddItemToPlayerInventory(ItemToAdd.InventoryRepresentation))
-            {
-                // TODO - create dialog stating inventory is currently full and deactivate menu.
-            }
-            else
-            {
-                Destroy(ItemToAdd.gameObject);
-                gameMenu.DeactivateMenu();
-            }
+            gameMenu.TryAddItemToPlayerInventory(ItemToAdd.InventoryRepresentation);
+            Destroy(ItemToAdd.gameObject);
+            gameMenu.DeactivateMenu();
         }
     }
 }
