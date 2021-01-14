@@ -1,7 +1,7 @@
 ﻿////////////////////////////////////////
 // Author:              LEAKYFINGERS
 // Date created:        24.11.20
-// Date last edited:    02.01.21
+// Date last edited:    14.01.21
 // Reference/s:         https://repo.ijs.si/eHeritage/3DInstitute/blob/master/Assets/TextMesh%20Pro/Examples/Scripts/VertexColorCycler.cs
 ////////////////////////////////////////
 using System.Collections;
@@ -19,6 +19,7 @@ namespace SurvivalHorrorFramework
         public delegate void DialogDisplayEventHandler();
 
         public event DialogDisplayEventHandler OnAllDialogSnippetsDisplayCompleted; // Called when all of the dialog snippets have finished being displayed and the dialog display is awaiting player input.
+        public event DialogDisplayEventHandler OnDialogExited; // Called when the dialog has finished displaying and the player presses an input to cause it to disappear.
         public PauseHandler ScenePauseHandler;
         public TextMeshProUGUI UIText;
 
@@ -27,11 +28,12 @@ namespace SurvivalHorrorFramework
             get { return isDisplayDialogCoroutineRunning; }
         }
 
-        public void PauseSceneAndDisplayDialog(Dialog dialog)
+        public void DisplayDialog(Dialog dialog, bool pauseSceneWhileDialogIsDisplaying)
         {
             if (!isDisplayDialogCoroutineRunning)
             {
-                StartCoroutine("PauseSceneAndDisplayDialogCoroutine", dialog);
+                currentDialogToBeDisplayed = dialog;
+                StartCoroutine("DisplayDialogCoroutine", pauseSceneWhileDialogIsDisplaying);
             }
         }
 
@@ -45,16 +47,21 @@ namespace SurvivalHorrorFramework
         }
 
 
+        private Dialog currentDialogToBeDisplayed;
         private bool isDisplayDialogCoroutineRunning;
 
-        private IEnumerator PauseSceneAndDisplayDialogCoroutine(Dialog dialog)
+        private IEnumerator DisplayDialogCoroutine(bool pauseSceneWhileDialogIsDisplaying)
         {
-            isDisplayDialogCoroutineRunning = true;
-            ScenePauseHandler.PauseScene();
+            isDisplayDialogCoroutineRunning = true;            
             UIText.enabled = true;
 
+            if(pauseSceneWhileDialogIsDisplaying)
+            {
+                ScenePauseHandler.PauseScene();
+            }
+
             // Divides the dialog into individual 'snippets' seperated by a tilde character which are each displayed one at a time in sequence.
-            string[] dialogSnippets = dialog.DisplayedText.Split('~'); 
+            string[] dialogSnippets = currentDialogToBeDisplayed.DisplayedText.Split('~'); 
             for(int i = 0; i < dialogSnippets.Length; ++i)
             {
                 UIText.text = dialogSnippets[i].Trim(); // Trims the text to remove any whitespace at the beginning or end.
@@ -62,7 +69,7 @@ namespace SurvivalHorrorFramework
                 TMP_TextInfo textInfo = UIText.textInfo;
 
                 // If the character reveal speed is greater than zero causes the characters to appear one at a time, else causes them all to appear instantly.
-                if (dialog.DefaultCharacterRevealInterval > 0.0f)
+                if (currentDialogToBeDisplayed.DefaultCharacterRevealInterval > 0.0f)
                 {
                     SetAllUITextCharactersTransparency(textInfo, 0); // Sets all the characters to initially be invisible.
 
@@ -74,7 +81,7 @@ namespace SurvivalHorrorFramework
                         SetUITextCharacterColor(textInfo, opaqueColor, appearingCharacterIndex);
                         appearingCharacterIndex++;
 
-                        yield return new WaitForSecondsRealtime(Input.GetAxis("Use") == 1.0f || Input.GetAxis("Run") == 1.0f ? dialog.FastCharacterRevealInterval : dialog.DefaultCharacterRevealInterval); // Adjusts the speed of the character reveal according to whether any inputs are being held
+                        yield return new WaitForSecondsRealtime(Input.GetAxis("Use") == 1.0f || Input.GetAxis("Run") == 1.0f ? currentDialogToBeDisplayed.FastCharacterRevealInterval : currentDialogToBeDisplayed.DefaultCharacterRevealInterval); // Adjusts the speed of the character reveal according to whether any inputs are being held
                     }
                     SetAllUITextCharactersTransparency(textInfo, 255);
                 }
@@ -104,8 +111,17 @@ namespace SurvivalHorrorFramework
                 }
             }
 
-            UIText.enabled = false;
-            ScenePauseHandler.UnpauseScene();
+            if(OnDialogExited != null)
+            {
+                OnDialogExited.Invoke();
+            }
+
+            if (pauseSceneWhileDialogIsDisplaying)
+            {
+                ScenePauseHandler.UnpauseScene();
+            }
+
+            UIText.enabled = false;            
             isDisplayDialogCoroutineRunning = false;
         }
 

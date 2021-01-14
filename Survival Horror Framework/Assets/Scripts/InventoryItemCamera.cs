@@ -1,7 +1,7 @@
 ﻿////////////////////////////////////////
 // Author:              LEAKYFINGERS
 // Date created:        29.12.20
-// Date last edited:    02.01.21
+// Date last edited:    14.01.21
 ////////////////////////////////////////
 using System.Collections;
 using System.Collections.Generic;
@@ -18,6 +18,7 @@ namespace SurvivalHorrorFramework
         public Vector3 InventoryItemDisplayCoroutineSpawnRotation = new Vector3(720.0f, 720.0f, 0.0f); // The local rotation of the displayed inventory items which will lerp towards the local rotation value of the 3D model prefab when they move in front of the camera - used to create the classic 'item appear spin effect'.
         public float InventoryItemDisplayCoroutineDuration = 1.5f; // The duration of the spinning 'animations' which play when an inventory item starts/stops being displayed.
         public float InventoryItemDisplayCoroutineSpawnDistanceFromCamera = 10.0f; // The local distance from the inventory item camera at which the inventory item spawns before being displayed/despawns after being displayed.        
+        public float DisplayedItemRotateSpeedInDegrees = 90.0f;        
 
         public bool IsDisplayingAnInventoryItem
         {
@@ -47,6 +48,27 @@ namespace SurvivalHorrorFramework
             else if(!isItemDisplayHandlingCoroutineRunning)
             {
                 StartCoroutine("StopDisplayingItemCoroutine");
+            }
+        }
+
+        // If an item is currently being displayed, rotates it according to the DisplayedItemRotateSpeedInDegrees member value and the normalized direction vector to dicate the horizontal and vertical spin directions.
+        public void RotateDisplayedItem(Vector2 direction)
+        {
+            if (!IsDisplayingAnInventoryItem)
+            {
+                throw new System.Exception("The InventoryItemCamera " + name + " cannot rotate the currently displayed item because no item is being displayed.");
+            }
+            
+            if(direction == Vector2.zero)
+            {
+                return;
+            }
+            else
+            {
+                direction.Normalize();
+
+                currentlyDisplayedInventoryItem.RotateAround(currentlyDisplayedInventoryItem.position, Vector3.down, direction.x * DisplayedItemRotateSpeedInDegrees * Time.deltaTime);
+                currentlyDisplayedInventoryItem.RotateAround(currentlyDisplayedInventoryItem.position, Vector3.left, direction.y * DisplayedItemRotateSpeedInDegrees * Time.deltaTime);
             }
         }
 
@@ -107,129 +129,10 @@ namespace SurvivalHorrorFramework
 
             isItemDisplayHandlingCoroutineRunning = false;
         }
-
-        //private IEnumerator DisplayItemCoroutine(InventoryItem inventoryItem)
-        //{
-        //    isItemSpinCoroutineRunning = true;
-
-        //    currentlyisplayedInventoryItem = Instantiate(inventoryItem.ModelPrefab, this.transform);
-
-        //    Vector3 startingLocalPos = new Vector3(0.0f, 0.0f, 10.0f);
-        //    Vector3 startingLocalRotation = new Vector3(0.0f, 0.0f, 0.0f);
-        //    Vector3 endingLocalPos = new Vector3(0.0f, 0.0f, 2.0f);
-        //    Vector3 endingLocalRotation = new Vector3(0.0f, 1080.0f, 0.0f);
-        //    float timer = 0.0f;
-        //    while (timer < ItemSpinDuration)
-        //    {
-        //        currentlyisplayedInventoryItem.transform.localPosition = Vector3.Lerp(startingLocalPos, endingLocalPos, timer / ItemSpinDuration);
-        //        currentlyisplayedInventoryItem.transform.localRotation = Quaternion.Euler(Vector3.Lerp(startingLocalRotation, endingLocalRotation, timer / ItemSpinDuration));
-
-        //        timer += Time.deltaTime;
-        //        yield return null;
-        //    }
-        //    currentlyisplayedInventoryItem.localPosition = endingLocalPos;
-
-        //    isItemSpinCoroutineRunning = false;
-        //}
-
+        
         private void Awake()
         {
             fadeImageColor = FadeImage.color;
         }
-        
-        //public ColorTintPostProcessHandler FadeHandler;
-        ////public FixedCameraHandler SceneFixedCameraHandler;
-        ////public PauseHandler ScenePauseHandler;
-        //public float FadeDuration = 0.5f; // The duration of each fade to/from black when a vignette is being played.
-
-        //// Initialises a coroutine which pauses the scene and disables the fixed camera handler before spawning the animated vignette object from a prefab to view through the vignette camera until the animation is completed.
-        //public void PlayVignette(Transform animatedVignetteObjectPrefab)
-        //{
-        //    if (!isPlayVignetteCoroutineRunning)
-        //    {
-        //        coroutineSceneToLoadIndex = -1; // A scene will only be loaded if the index is greater than or equal to zero.
-        //        StartCoroutine("PlayVignetteCoroutine", animatedVignetteObjectPrefab);
-        //    }
-        //    else
-        //    {
-        //        Debug.Log("The PlayVignette() function cannot be executed because the PlayVignetteCoroutine() is already running.");
-        //    }
-        //}
-
-        //// Initialises a coroutine which pauses the scene and disables the fixed camera handler before spawning the animated vignette object from a prefab to view through the vignette camera until the animation is completed and then loads the specified scene.
-        //public void PlayVignetteAndLoadScene(Transform animatedVignetteObjectPrefab, int sceneToLoadIndex)
-        //{
-        //    if (!isPlayVignetteCoroutineRunning)
-        //    {
-        //        coroutineSceneToLoadIndex = sceneToLoadIndex;
-        //        StartCoroutine("PlayVignetteCoroutine", animatedVignetteObjectPrefab);
-        //    }
-        //    else
-        //    {
-        //        Debug.Log("The PlayVignette() function cannot be executed because the PlayVignetteCoroutine() is already running.");
-        //    }
-        //}
-
-
-        //private AudioListener audioListenerComponent;
-        //private Camera cameraComponent;        
-        //private bool isPlayVignetteCoroutineRunning;
-        //private int coroutineSceneToLoadIndex; // Stores the index for the scene to load when the play vignette coroutine is completed - if the value is less than zero, disables the vignette camera and returns back to the current scene instead.
-
-        //// The property used to get and set whether the audio listener and camera components of the vignette camera are currently active.
-        //private bool CameraComponentsAreActive
-        //{
-        //    get { return audioListenerComponent.enabled == true && cameraComponent.enabled == true; }
-        //    set
-        //    {
-        //        audioListenerComponent.enabled = value;
-        //        cameraComponent.enabled = value;
-        //    }
-        //}
-
-        //private void Awake()
-        //{
-        //    audioListenerComponent = GetComponent<AudioListener>();
-        //    cameraComponent = GetComponent<Camera>();
-        //    CameraComponentsAreActive = false;
-        //}
-
-        //// A coroutine which pauses the scene and disables the fixed camera handler before spawning the animated vignette object from a prefab to view through the vignette camera until the animation is completed.
-        //private IEnumerator PlayVignetteCoroutine(Transform animatedVignetteObjectPrefab)
-        //{
-        //    isPlayVignetteCoroutineRunning = true;
-
-        //    ScenePauseHandler.PauseScene();
-        //    FadeHandler.FadeToColor(Color.black, FadeDuration);
-        //    yield return new WaitForSecondsRealtime(FadeDuration);
-
-        //    SceneFixedCameraHandler.SetAllFixedCamerasActiveState(false);
-        //    CameraComponentsAreActive = true;
-        //    Transform animatedVignetteObject = GameObject.Instantiate(animatedVignetteObjectPrefab, this.transform);
-        //    FadeHandler.FadeToColor(Color.clear, FadeDuration);
-
-        //    yield return new WaitForSecondsRealtime(animatedVignetteObject.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).length - FadeDuration);
-
-        //    FadeHandler.FadeToColor(Color.black, FadeDuration);
-        //    yield return new WaitForSecondsRealtime(FadeDuration);
-
-        //    Destroy(animatedVignetteObject.gameObject);
-
-        //    if (coroutineSceneToLoadIndex < 0)
-        //    {
-        //        CameraComponentsAreActive = false;
-        //        SceneFixedCameraHandler.SetAllFixedCamerasActiveState(true);
-        //        FadeHandler.FadeToColor(Color.clear, FadeDuration);
-        //        yield return new WaitForSecondsRealtime(FadeDuration);
-
-        //        ScenePauseHandler.UnpauseScene();
-
-        //        isPlayVignetteCoroutineRunning = false;
-        //    }
-        //    else
-        //    {
-        //        SceneManager.LoadScene(coroutineSceneToLoadIndex);
-        //    }            
-        //}
     }
 }

@@ -1,7 +1,7 @@
 ﻿////////////////////////////////////////
 // Author:              LEAKYFINGERS
 // Date created:        16.11.20
-// Date last edited:    12.01.21
+// Date last edited:    13.01.21
 ////////////////////////////////////////
 using System.Collections;
 using System.Collections.Generic;
@@ -99,6 +99,7 @@ namespace SurvivalHorrorFramework
             }
         }
 
+        // If the menu is currently in 'Default' mode, begins the 'check item' process in which the specified inventory item is displayed to be viewed and examined.
         public void BeginCheckInventoryItemProcess(InventoryItem inventoryItem)
         {
             if (isMenuActive && currentMenuMode == MenuMode.Default && !isMenuProcessCoroutineRunning)
@@ -126,9 +127,6 @@ namespace SurvivalHorrorFramework
             }
             SetSelectedMenuTile(menuTileGroups.Peek()[0]);
         }
-              
-
-        
 
 
         private AudioSource audioSourceComponent;
@@ -140,9 +138,10 @@ namespace SurvivalHorrorFramework
         private bool wasHorizontalInputDownDuringPreviousUpdate;
         private bool wasVerticalInputDownDuringPreviousUpdate;
         private bool wasUseInputDownDuringPreviousUpdate;
-        private bool wasRunInputDownDuringPreviousUpdate;
+        private bool wasRunInputDownDuringPreviousUpdate;        
         private bool isMenuProcessCoroutineRunning; // A flag used to specify whether the menu is currently running in it's default state or is going through some sequential process handled by a coroutine (activating, viewing an item, deactivation, etc.)
         private bool hasDialogDisplayFinishedDisplayingAllSnippets; // Whether the menu dialog display has finished displaying all the current snippets and is awaiting user input to proceed.
+        private bool hasDialogDisplayExitedDialog; // Whether the menu dialog display has finished displaying all the current snippets and the player has pressed an input to 'exit' the dialog process.
         private int currentlySelectedMenuTileIndex; // The index of the currently selected menu tile within the group that is currently on the top of the menu groups stack.
 
         private IEnumerator ActivateMenuInDefaultModeCoroutine()
@@ -191,7 +190,7 @@ namespace SurvivalHorrorFramework
             // Displays dialog asking the player whether they want to add the item to their inventory or not.
             Dialog PickUpItemDialog = Instantiate(PickUpItemDialogTemplate);
             PickUpItemDialog.DisplayedText += pickUpItem.InventoryRepresentation.Name + '?';
-            MenuDialogDisplay.PauseSceneAndDisplayDialog(PickUpItemDialog);
+            MenuDialogDisplay.DisplayDialog(PickUpItemDialog, false);
             hasDialogDisplayFinishedDisplayingAllSnippets = false;
             while (!hasDialogDisplayFinishedDisplayingAllSnippets)
             {
@@ -236,7 +235,7 @@ namespace SurvivalHorrorFramework
             yield return new WaitForSecondsRealtime(SceneInventoryItemCamera.InventoryItemDisplayCoroutineDuration);
 
             // Displays dialog telling the player that their inventory is already full.
-            MenuDialogDisplay.PauseSceneAndDisplayDialog(InventoryFullDialog);
+            MenuDialogDisplay.DisplayDialog(InventoryFullDialog, false);
             hasDialogDisplayFinishedDisplayingAllSnippets = false;
             while (!hasDialogDisplayFinishedDisplayingAllSnippets)
             {
@@ -264,6 +263,7 @@ namespace SurvivalHorrorFramework
         {
             isMenuProcessCoroutineRunning = true;
 
+            // Pops the 'item interaction' menu tiles so they're no longer visible/interactable and stores them to be re-pushed when the coroutine is completed.
             List<MenuTile> itemInteractionMenuTileGroup = menuTileGroups.Peek();
             PopMenuTileGroup();
 
@@ -273,7 +273,32 @@ namespace SurvivalHorrorFramework
 
             while (true)
             {
-                if (Input.GetAxis("Run") == 1.0f && !wasRunInputDownDuringPreviousUpdate)
+                // If the 'Use' input is pressed, pauses the examine process and displays the examine dialog of the inventory item.
+                if (Input.GetAxis("Use") == 1.0f && !wasUseInputDownDuringPreviousUpdate)
+                {
+                    MenuDialogDisplay.DisplayDialog(inventoryItem.ExamineDialog, false);
+                    hasDialogDisplayExitedDialog = false;
+                    while(!hasDialogDisplayExitedDialog)
+                    {
+                        yield return null;
+                    }
+                    MenuDialogDisplay.DisplayBasicText(inventoryItem.Name);
+                }
+
+                // Allows the player to spin the displayed inventory item.
+                if (Input.GetAxis("Horizontal") != 0.0f || Input.GetAxis("Vertical") != 0.0f)
+                {
+                    SceneInventoryItemCamera.RotateDisplayedItem(new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical")));
+                }
+
+                // If the 'Menu' input is pressed, exits the menu - the DeactivateMenu coroutine is directly called because it doesn't check if isMenuProcessCoroutineRunning is already true.
+                if (Input.GetAxis("Menu") == 1.0f && !wasMenuInputDownDuringPreviousUpdate)
+                {
+                    StartCoroutine("DeactivateMenuCoroutine");
+                    yield break;
+                }
+                // Else if the 'Run' input is pressed, breaks the 'check item' loop.
+                else if (Input.GetAxis("Run") == 1.0f && !wasRunInputDownDuringPreviousUpdate)
                 {
                     break;
                 }
@@ -286,9 +311,9 @@ namespace SurvivalHorrorFramework
 
             // Pushes the item interaction tiles back as the current menu tile layer and re-selects the 'Check Item' tile.
             PushMenuTileGroup(itemInteractionMenuTileGroup);
-            foreach(MenuTile itemInteractionMenuTile in itemInteractionMenuTileGroup)
+            foreach (MenuTile itemInteractionMenuTile in itemInteractionMenuTileGroup)
             {
-                if(itemInteractionMenuTile.GetComponent<CheckitemMenuTile>())
+                if (itemInteractionMenuTile.GetComponent<CheckitemMenuTile>())
                 {
                     SetSelectedMenuTile(itemInteractionMenuTile);
                     break;
@@ -297,29 +322,6 @@ namespace SurvivalHorrorFramework
 
             isMenuProcessCoroutineRunning = false;
             currentMenuMode = MenuMode.Default;
-
-
-            //// Displays dialog telling the player that their inventory is already full.
-            //MenuDialogDisplay.PauseSceneAndDisplayDialog(InventoryFullDialog);
-            //hasDialogDisplayFinishedDisplayingAllSnippets = false;
-            //while (!hasDialogDisplayFinishedDisplayingAllSnippets)
-            //{
-            //    yield return new WaitForEndOfFrame();
-            //}
-
-            //// Activates the 'yes' and 'no' menu tiles so the player can choose whether to add the item to their inventory.
-            //SetParentMenuTileGroup(AddItemParentMenuTileGroup);
-            //// Stores the PickUpItem to be added in the 'confirm/yes' menu tile so that it can call TryAddItemToPlayerInventory() when activated.
-            //foreach (MenuTile menuTile in menuTileGroups.Peek())
-            //{
-            //    if (menuTile.gameObject.GetComponent<ConfirmAddItemToInventoryMenuTile>())
-            //    {
-            //        menuTile.gameObject.GetComponent<ConfirmAddItemToInventoryMenuTile>().ItemToAdd = pickUpItem;
-            //        break;
-            //    }
-            //}
-
-
         }
 
         private IEnumerator DeactivateMenuCoroutine()
@@ -331,7 +333,7 @@ namespace SurvivalHorrorFramework
             // If the 'pick up item' dialog is currently being displayed, removes the 'yes' and 'no' tiles before continuing to deactivate the menu.
             if (currentMenuMode == MenuMode.PickUpItem)
             {
-                PopMenuTileGroup();                
+                PopMenuTileGroup();
             }
             // If an inventory item is currently being displayed in the menu, stops displaying it.
             if (SceneInventoryItemCamera.IsDisplayingAnInventoryItem)
@@ -368,6 +370,7 @@ namespace SurvivalHorrorFramework
             isMenuActive = false;
 
             MenuDialogDisplay.OnAllDialogSnippetsDisplayCompleted += SetDialogDisplayFinishedDisplayingAllSnippetsFlagToTrue;
+            MenuDialogDisplay.OnDialogExited += SetDialogDisplayExitedFlagToTrue;
         }
 
         private void Start()
@@ -494,7 +497,7 @@ namespace SurvivalHorrorFramework
                     InventoryTile selectedInventoryTile = menuTileGroups.Peek()[i].GetComponent<InventoryTile>();
                     if (selectedInventoryTile != null)
                     {
-                        if(!selectedInventoryTile.IsEmpty)
+                        if (!selectedInventoryTile.IsEmpty)
                         {
                             MenuDialogDisplay.DisplayBasicText(selectedInventoryTile.StoredInventoryItemName);
                         }
@@ -535,7 +538,7 @@ namespace SurvivalHorrorFramework
             {
                 return;
             }
-            
+
             // Disables each of the menu tiles in the current layer and pops it.
             foreach (MenuTile menuTile in menuTileGroups.Peek())
             {
@@ -546,9 +549,9 @@ namespace SurvivalHorrorFramework
             // Searches through the menu tiles of the new layer and updates the currently selected tile index to match that of the tile which had been selected previously.
             if (menuTileGroups.Count > 0)
             {
-                for(int i = 0; i < menuTileGroups.Peek().Count; ++i)
+                for (int i = 0; i < menuTileGroups.Peek().Count; ++i)
                 {
-                    if(menuTileGroups.Peek()[i].IsSelected)
+                    if (menuTileGroups.Peek()[i].IsSelected)
                     {
                         currentlySelectedMenuTileIndex = i;
                         break;
@@ -560,6 +563,11 @@ namespace SurvivalHorrorFramework
         private void SetDialogDisplayFinishedDisplayingAllSnippetsFlagToTrue()
         {
             hasDialogDisplayFinishedDisplayingAllSnippets = true;
+        }
+
+        private void SetDialogDisplayExitedFlagToTrue()
+        {
+            hasDialogDisplayExitedDialog = true;
         }
     }
 }

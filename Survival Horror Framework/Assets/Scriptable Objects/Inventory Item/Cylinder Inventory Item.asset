@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96d916d8595f92a41b8ae4a3605400d0, type: 3}
   m_Name: Cylinder Inventory Item
   m_EditorClassIdentifier: 
+  ExamineDialog: {fileID: 11400000, guid: 13977a3df6fe4fe4a938641fcd767fff, type: 2}
   InventoryTileSprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
   ModelPrefab: {fileID: 2248070508955438873, guid: e2dba634a09d6774fa429bb9f6ddaece,
     type: 3}
