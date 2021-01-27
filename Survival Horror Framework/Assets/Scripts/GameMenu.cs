@@ -1,7 +1,7 @@
 ﻿////////////////////////////////////////
 // Author:              LEAKYFINGERS
 // Date created:        16.11.20
-// Date last edited:    13.01.21
+// Date last edited:    27.01.21
 ////////////////////////////////////////
 using System.Collections;
 using System.Collections.Generic;
@@ -38,29 +38,30 @@ namespace SurvivalHorrorFramework
         public PauseHandler ScenePauseHandler;
         public float ActivationFadeDuration = 0.25f;
 
-        public bool IsInventoryFull
+        // Returns whether the specified inventory item can be added to either an empty inventory tile or one which contains other instances of the same inventory item and isn't full.
+        public bool CanItemBeAddedToInventory(InventoryItem itemToAdd)
         {
-            get
+            foreach (InventoryTile inventoryTile in InventoryTiles)
             {
-                foreach (InventoryTile inventoryTile in InventoryTiles)
+                if (inventoryTile.IsEmpty || inventoryTile.StoredInventoryItemName == itemToAdd.name && !inventoryTile.IsFull)
                 {
-                    if (inventoryTile.IsEmpty)
-                    {
-                        return false;
-                    }
+                    return true;
                 }
-
-                return true;
             }
-        }
 
-        // Attempts to add the specified item to one of the inventory tiles in the menu - returns 'true' if successful, else if the inventory is full returns 'false'.
+            return false;
+        }        
+
+        // Attempts to add the specified item to one of the inventory tiles in the menu - returns 'true' if successful, else if all available inventory slots are full returns 'false'.
         public bool TryAddItemToPlayerInventory(InventoryItem itemToAdd)
         {
             bool itemAdded = false;
             foreach (InventoryTile inventoryTile in InventoryTiles)
             {
-                if (inventoryTile.IsEmpty)
+                Debug.Log("Stored inventory item name: " + inventoryTile.StoredInventoryItemName + "  Item to add name: " + itemToAdd.DisplayName);
+                Debug.Log("Tile full: " + inventoryTile.IsFull);
+
+                if (inventoryTile.IsEmpty || inventoryTile.StoredInventoryItemName == itemToAdd.DisplayName && !inventoryTile.IsFull) //(inventoryTile.IsEmpty || inventoryTile.StoredInventoryItemName == itemToAdd.name && !inventoryTile.IsFull)
                 {
                     inventoryTile.StoreInventoryItem(itemToAdd);
                     itemAdded = true;
@@ -86,7 +87,7 @@ namespace SurvivalHorrorFramework
         {
             if (!isMenuActive && !ScenePauseHandler.IsScenePaused && !isMenuProcessCoroutineRunning)
             {
-                if (!IsInventoryFull)
+                if (CanItemBeAddedToInventory(pickUpItem.InventoryRepresentation))
                 {
                     currentMenuMode = MenuMode.PickUpItem;
                     StartCoroutine("ActivateMenuInPickUpItemModeCoroutine", pickUpItem);
@@ -189,7 +190,7 @@ namespace SurvivalHorrorFramework
 
             // Displays dialog asking the player whether they want to add the item to their inventory or not.
             Dialog PickUpItemDialog = Instantiate(PickUpItemDialogTemplate);
-            PickUpItemDialog.DisplayedText += pickUpItem.InventoryRepresentation.Name + '?';
+            PickUpItemDialog.DisplayedText += pickUpItem.InventoryRepresentation.DisplayName + '?';
             MenuDialogDisplay.DisplayDialog(PickUpItemDialog, false);
             hasDialogDisplayFinishedDisplayingAllSnippets = false;
             while (!hasDialogDisplayFinishedDisplayingAllSnippets)
@@ -242,18 +243,6 @@ namespace SurvivalHorrorFramework
                 yield return new WaitForEndOfFrame();
             }
 
-            //// Activates the 'yes' and 'no' menu tiles so the player can choose whether to add the item to their inventory.
-            //SetParentMenuTileGroup(AddItemParentMenuTileGroup);
-            //// Stores the PickUpItem to be added in the 'confirm/yes' menu tile so that it can call TryAddItemToPlayerInventory() when activated.
-            //foreach (MenuTile menuTile in menuTileGroups.Peek())
-            //{
-            //    if (menuTile.gameObject.GetComponent<ConfirmAddItemToInventoryMenuTile>())
-            //    {
-            //        menuTile.gameObject.GetComponent<ConfirmAddItemToInventoryMenuTile>().ItemToAdd = pickUpItem;
-            //        break;
-            //    }
-            //}
-
             MenuDialogDisplay.UIText.enabled = true;
             isMenuActive = true;
             isMenuProcessCoroutineRunning = false;
@@ -282,7 +271,7 @@ namespace SurvivalHorrorFramework
                     {
                         yield return null;
                     }
-                    MenuDialogDisplay.DisplayBasicText(inventoryItem.Name);
+                    MenuDialogDisplay.DisplayBasicText(inventoryItem.DisplayName);
                 }
 
                 // Allows the player to spin the displayed inventory item.

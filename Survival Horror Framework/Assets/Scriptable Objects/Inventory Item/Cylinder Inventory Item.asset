@@ -16,4 +16,5 @@ MonoBehaviour:
   InventoryTileSprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
   ModelPrefab: {fileID: 2248070508955438873, guid: e2dba634a09d6774fa429bb9f6ddaece,
     type: 3}
-  Name: <color=#188E26>Cylinder</color>
+  DisplayName: <color=#188E26>Cylinder</color>
+  MaxStackCount: 1
