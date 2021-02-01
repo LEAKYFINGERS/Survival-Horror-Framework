@@ -12,6 +12,7 @@ namespace SurvivalHorrorFramework
     // The menu tile which allows the player to 'inspect' the item in the currently selected inventory tile.
     public class CheckItemMenuTile : MenuTile
     {
+        [HideInInspector]
         public InventoryItem InventoryItemToCheck;
 
         // Pushes the item interaction menu tile group onto the stack if this inventory tile currently contains an inventory item.

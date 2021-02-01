@@ -18,9 +18,21 @@ namespace SurvivalHorrorFramework
 
         public override void ActivateTile(GameMenu gameMenu)
         {
-            gameMenu.SetParentMenuTileGroup(gameMenu.DefaultParentMenuTileGroup, InitiallySelectedInventoryTile);
-            
-            InitiallySelectedInventoryTile = null;
+            if(!InitiallySelectedInventoryTile.IsEmpty)
+            {
+                // If both tiles contain the same type of inventory item and the attached tile isn't full, transfers as many as possible from the initially selected tile (until the attached tile is full/the initial tile is empty).
+                if(InitiallySelectedInventoryTile.StoredInventoryItemDisplayName == AttachedInventoryTile.StoredInventoryItemDisplayName && !AttachedInventoryTile.IsFull)
+                {
+                    while(!AttachedInventoryTile.IsFull && !AttachedInventoryTile.IsEmpty)
+                    {
+                        AttachedInventoryTile.StoreInventoryItem(InitiallySelectedInventoryTile.StoredInventoryItem);
+                        InitiallySelectedInventoryTile.DestroyStoredInventoryItems(1);
+                    }
+
+                    InitiallySelectedInventoryTile = null;
+                    gameMenu.SetParentMenuTileGroup(gameMenu.DefaultParentMenuTileGroup, AttachedInventoryTile); // Resets the menu to be back in the first 'layer' but with the newly combined item/s selected.
+                }
+            }            
         }
     }
 }

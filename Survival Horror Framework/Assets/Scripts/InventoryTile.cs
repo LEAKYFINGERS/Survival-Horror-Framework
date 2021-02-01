@@ -17,10 +17,16 @@ namespace SurvivalHorrorFramework
         public Image StoredInventoryItemImage; // The image used to display the sprite of the currently stored inventory item.
         public TextMeshProUGUI ItemCountText; // The UI text used to display the number of inventory items currently being stored within this tile.
 
+        // The property used to get the currently stored inventory item.
+        public InventoryItem StoredInventoryItem
+        {
+            get { return storedInventoryItem; }
+        }
+        
         // The property used to get whether no item/s are currently being stored in this inventory tile.
         public bool IsEmpty
         {
-            get { return storedInventoryItem == null; }
+            get { return storedInventoryItem == null || storedInventoryItemCount == 0; }
         }
 
         // The property used to get whether the maximum count of the currently stored inventory item is being stored within this tile.
@@ -29,8 +35,8 @@ namespace SurvivalHorrorFramework
             get { return storedInventoryItem != null && storedInventoryItemCount == storedInventoryItem.MaxStackCount; }
         }
 
-        // The property used to get the name of the currently stored inventory item - if no item is currently being stored, returns an empty string.
-        public string StoredInventoryItemName
+        // The property used to get the displayed name of the currently stored inventory item - if no item is currently being stored, returns an empty string.
+        public string StoredInventoryItemDisplayName
         {
             get
             {
@@ -49,23 +55,36 @@ namespace SurvivalHorrorFramework
         public override void ActivateTile(GameMenu gameMenu)
         {
             if (!IsEmpty)
-            {                
+            {
+                bool useItemTilePrepared = false;
+                bool checkItemTilePrepared = false;
+                bool combineItemTilePrepared = false;
                 foreach (MenuTile childTile in ChildMenuTiles)
                 {
-                    if (childTile.GetComponent<CheckItemMenuTile>())
+                    if (childTile.GetComponent<UseItemMenuTile>())
                     {
-                        childTile.GetComponent<CheckItemMenuTile>().InventoryItemToCheck = storedInventoryItem;                                             
+                        childTile.GetComponent<UseItemMenuTile>().InventoryTileToUse = this;
+                        //childTile.GetComponent<UseItemMenuTile>().InventoryItemToUse = storedInventoryItem;
+                        useItemTilePrepared = true;
+                    }
+                    else if (childTile.GetComponent<CheckItemMenuTile>())
+                    {
+                        childTile.GetComponent<CheckItemMenuTile>().InventoryItemToCheck = storedInventoryItem;
+                        checkItemTilePrepared = true;
                     }
                     else if (childTile.GetComponent<CombineItemMenuTile>())
                     {
-                        childTile.GetComponent<CombineItemMenuTile>().InitiallySelectedInventoryTile = this;                        
+                        childTile.GetComponent<CombineItemMenuTile>().InitiallySelectedInventoryTile = this;
+                        combineItemTilePrepared = true;
                     }
                 }
 
-                base.ActivateTile(gameMenu);
+                if (!useItemTilePrepared || !checkItemTilePrepared || !combineItemTilePrepared)
+                {
+                    throw new System.Exception("For the InventoryTile " + name + " to function correctly, the child tiles must have at least one UseItemTile, one CheckitemMenuTile, and one CombineItemMenuTile component present.");
+                }
 
-                // TODO - add check to ensure the inventory tile contains each of use/equip, check and combine child tile.
-                ////throw new System.Exception("For the InventoryTile " + name + " to function correctly, one of the assigned child tiles must have a CheckitemMenuTile component attached.");
+                base.ActivateTile(gameMenu);
             }
         }
 
@@ -76,7 +95,7 @@ namespace SurvivalHorrorFramework
             {
                 throw new System.Exception("The inventory item " + item.DisplayName + " cannot be stored in the inventory tile " + this.name + " because it already contains the maximum number of inventory item " + storedInventoryItem.name + " which can be stored within a single inventory tile.");
             }
-            else if(!IsEmpty && item.DisplayName != StoredInventoryItemName)
+            else if (!IsEmpty && item.DisplayName != StoredInventoryItemDisplayName)
             {
                 throw new System.Exception("The display name of the specified inventory item must match that of the already stored item within this inventory tile.");
             }
@@ -93,16 +112,29 @@ namespace SurvivalHorrorFramework
             PlayMenuActivationSoundOnActivateTile = true;
         }
 
+        // Removes the specified count of the currently stored inventory items from this tile.
+        public void DestroyStoredInventoryItems(uint toRemoveCount)
+        {
+            if (IsEmpty)
+            {
+                throw new System.Exception("The DestroyStoredInventoryItems() function of InventoryTile " + name + " cannot be called as it is already empty.");
+            }
+            if (storedInventoryItemCount - toRemoveCount < 0)
+            {
+                throw new System.Exception("The toRemoveCount parameter (" + toRemoveCount + ") of DestroyStoredInventoryItems() function of InventoryTile " + name + " must leave at least a remaining count of zero as a minimum after being subtracted from the current storedInventoryItemCount (" + storedInventoryItem + ".");
+            }
 
-        //public void DestroyStoredInventoryItem()
-        //{
-        //    if(!IsEmpty)
-        //    {
-        //        storedInventoryItem = null;
+            Debug.Log(storedInventoryItemCount - toRemoveCount);
+            
 
-        //        StoredInventoryItemImage.enabled = false;
-        //    }
-        //}
+            storedInventoryItemCount -= (int)toRemoveCount;
+            if (IsEmpty)
+            {
+                storedInventoryItem = null;
+                StoredInventoryItemImage.enabled = false;
+            }
+            UpdateItemCountText();
+        }
 
 
         protected override void Awake()
@@ -116,11 +148,11 @@ namespace SurvivalHorrorFramework
 
 
         private InventoryItem storedInventoryItem;
-        private uint storedInventoryItemCount;
+        private int storedInventoryItemCount;
 
         private void UpdateItemCountText()
         {
-            if(IsEmpty || storedInventoryItem.MaxStackCount == 1)
+            if (IsEmpty || storedInventoryItem.MaxStackCount == 1)
             {
                 ItemCountText.enabled = false;
             }

@@ -294,3 +294,4 @@ C:\Users\spudm\Documents\GitHub\Survival-Horror-Framework\Survival Horror Framew
 C:\Users\spudm\Documents\GitHub\Survival-Horror-Framework\Survival Horror Framework\obj\Debug\Assembly-CSharp-Editor-firstpass.csproj.CopyComplete
 C:\Users\spudm\Documents\GitHub\Survival-Horror-Framework\Survival Horror Framework\obj\Debug\Assembly-CSharp-Editor-firstpass.dll
 C:\Users\spudm\Documents\GitHub\Survival-Horror-Framework\Survival Horror Framework\obj\Debug\Assembly-CSharp-Editor-firstpass.pdb
+C:\Users\spudm\Documents\GitHub\Survival-Horror-Framework\Survival Horror Framework\Temp\Bin\Debug\Assembly-CSharp-firstpass.pdb

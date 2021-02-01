@@ -51,7 +51,7 @@ namespace SurvivalHorrorFramework
         {
             foreach (InventoryTile inventoryTile in InventoryTiles)
             {
-                if (inventoryTile.IsEmpty || inventoryTile.StoredInventoryItemName == itemToAdd.DisplayName && !inventoryTile.IsFull)
+                if (inventoryTile.IsEmpty || inventoryTile.StoredInventoryItemDisplayName == itemToAdd.DisplayName && !inventoryTile.IsFull)
                 {
                     return true;
                 }
@@ -66,7 +66,7 @@ namespace SurvivalHorrorFramework
             bool itemAdded = false;
             foreach (InventoryTile inventoryTile in InventoryTiles)
             {
-                if (inventoryTile.IsEmpty || inventoryTile.StoredInventoryItemName == itemToAdd.DisplayName && !inventoryTile.IsFull) //(inventoryTile.IsEmpty || inventoryTile.StoredInventoryItemName == itemToAdd.name && !inventoryTile.IsFull)
+                if (inventoryTile.IsEmpty || inventoryTile.StoredInventoryItemDisplayName == itemToAdd.DisplayName && !inventoryTile.IsFull) //(inventoryTile.IsEmpty || inventoryTile.StoredInventoryItemName == itemToAdd.name && !inventoryTile.IsFull)
                 {
                     inventoryTile.StoreInventoryItem(itemToAdd);
                     itemAdded = true;
@@ -131,7 +131,7 @@ namespace SurvivalHorrorFramework
                 throw new System.Exception("The parent tile group must contain at least one MenuTile instance.");
             }
 
-            for (int i = 0; i < menuTileGroups.Count; ++i)
+            while(menuTileGroups.Count > 0)
             {
                 PopMenuTileGroup();
             }
@@ -146,7 +146,7 @@ namespace SurvivalHorrorFramework
                 throw new System.Exception("The parent tile group must contain at least one MenuTile instance.");
             }
 
-            for (int i = 0; i < menuTileGroups.Count; ++i)
+            while (menuTileGroups.Count > 0)
             {
                 PopMenuTileGroup();
             }
@@ -182,7 +182,7 @@ namespace SurvivalHorrorFramework
                     {
                         if (!selectedInventoryTile.IsEmpty)
                         {
-                            MenuDialogDisplay.DisplayBasicText(selectedInventoryTile.StoredInventoryItemName);
+                            MenuDialogDisplay.DisplayBasicText(selectedInventoryTile.StoredInventoryItemDisplayName);
                         }
                         else
                         {
