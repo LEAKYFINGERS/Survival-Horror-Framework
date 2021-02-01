@@ -10,7 +10,7 @@ using UnityEngine;
 namespace SurvivalHorrorFramework
 {
     // The menu tile which allows the player to 'inspect' the item in the currently selected inventory tile.
-    public class CheckitemMenuTile : MenuTile
+    public class CheckItemMenuTile : MenuTile
     {
         public InventoryItem InventoryItemToCheck;
 

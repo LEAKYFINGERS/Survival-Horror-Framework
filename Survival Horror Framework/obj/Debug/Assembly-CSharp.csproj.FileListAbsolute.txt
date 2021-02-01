@@ -197,7 +197,6 @@ C:\Users\spudm\Documents\GitHub\Survival-Horror-Framework\Survival Horror Framew
 C:\Users\spudm\Documents\GitHub\Survival-Horror-Framework\Survival Horror Framework\Temp\Bin\Debug\UnityEngine.TestRunner.dll
 C:\Users\spudm\Documents\GitHub\Survival-Horror-Framework\Survival Horror Framework\Temp\Bin\Debug\UnityEditor.TestRunner.dll
 C:\Users\spudm\Documents\GitHub\Survival-Horror-Framework\Survival Horror Framework\Temp\Bin\Debug\Unity.CecilTools.dll
-C:\Users\spudm\Documents\GitHub\Survival-Horror-Framework\Survival Horror Framework\Temp\Bin\Debug\Assembly-CSharp-firstpass.pdb
 C:\Users\spudm\Documents\GitHub\Survival-Horror-Framework\Survival Horror Framework\Temp\Bin\Debug\UnityEngine.xml
 C:\Users\spudm\Documents\GitHub\Survival-Horror-Framework\Survival Horror Framework\Temp\Bin\Debug\UnityEngine.AIModule.xml
 C:\Users\spudm\Documents\GitHub\Survival-Horror-Framework\Survival Horror Framework\Temp\Bin\Debug\UnityEngine.ARModule.xml

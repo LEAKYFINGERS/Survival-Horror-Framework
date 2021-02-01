@@ -1,7 +1,7 @@
 ﻿////////////////////////////////////////
 // Author:              LEAKYFINGERS
 // Date created:        16.11.20
-// Date last edited:    27.01.21
+// Date last edited:    01.02.21
 ////////////////////////////////////////
 using System.Collections;
 using System.Collections.Generic;
@@ -15,6 +15,7 @@ namespace SurvivalHorrorFramework
     // The script used to handle the collection of objects which make up the in-game menu.
     public class GameMenu : MonoBehaviour
     {
+        public delegate void GameMenuEventHandler();
         public enum MenuMode
         {
             Default,
@@ -30,6 +31,7 @@ namespace SurvivalHorrorFramework
         public Dialog PickUpItemDialogTemplate; // The dialog asking the player whether they wish to add a item they've 'picked up' to their inventory - the PickUpItem's InventoryItem name + a question mark will be appended onto the end of the dialog template.
         public Dialog InventoryFullDialog;
         public DialogDisplay MenuDialogDisplay;
+        public event GameMenuEventHandler OnPopMenuTileGroup;
         public Image BackgroundImage;
         public InventoryItemCamera SceneInventoryItemCamera; // The camera used to render the 3D models which represent inventory items within the menu.
         public InventoryTile[] InventoryTiles; // An array pointing to the inventory tiles used to store the inventory items currently possessed by the player.
@@ -38,12 +40,18 @@ namespace SurvivalHorrorFramework
         public PauseHandler ScenePauseHandler;
         public float ActivationFadeDuration = 0.25f;
 
+        // The property used to get the currently selected menu tile within the menu.
+        public MenuTile SelectedMenuTile
+        {
+            get { return menuTileGroups.Peek()[currentlySelectedMenuTileIndex]; }
+        }
+        
         // Returns whether the specified inventory item can be added to either an empty inventory tile or one which contains other instances of the same inventory item and isn't full.
         public bool CanItemBeAddedToInventory(InventoryItem itemToAdd)
         {
             foreach (InventoryTile inventoryTile in InventoryTiles)
             {
-                if (inventoryTile.IsEmpty || inventoryTile.StoredInventoryItemName == itemToAdd.name && !inventoryTile.IsFull)
+                if (inventoryTile.IsEmpty || inventoryTile.StoredInventoryItemName == itemToAdd.DisplayName && !inventoryTile.IsFull)
                 {
                     return true;
                 }
@@ -58,9 +66,6 @@ namespace SurvivalHorrorFramework
             bool itemAdded = false;
             foreach (InventoryTile inventoryTile in InventoryTiles)
             {
-                Debug.Log("Stored inventory item name: " + inventoryTile.StoredInventoryItemName + "  Item to add name: " + itemToAdd.DisplayName);
-                Debug.Log("Tile full: " + inventoryTile.IsFull);
-
                 if (inventoryTile.IsEmpty || inventoryTile.StoredInventoryItemName == itemToAdd.DisplayName && !inventoryTile.IsFull) //(inventoryTile.IsEmpty || inventoryTile.StoredInventoryItemName == itemToAdd.name && !inventoryTile.IsFull)
                 {
                     inventoryTile.StoreInventoryItem(itemToAdd);
@@ -118,6 +123,38 @@ namespace SurvivalHorrorFramework
             }
         }
 
+        // Pops all existing menu tile groups and pushes the specified menu tile group so that it becomes the new 'base' layer of the menu.
+        public void SetParentMenuTileGroup(List<MenuTile> parentTileGroup)
+        {
+            if (parentTileGroup.Count == 0)
+            {
+                throw new System.Exception("The parent tile group must contain at least one MenuTile instance.");
+            }
+
+            for (int i = 0; i < menuTileGroups.Count; ++i)
+            {
+                PopMenuTileGroup();
+            }
+
+            PushMenuTileGroup(parentTileGroup);
+        }
+        // Pops all existing menu tile groups and pushes the specified menu tile group so that it becomes the new 'base' layer of the menu as well as setting the specified menu tile as the selected tile.
+        public void SetParentMenuTileGroup(List<MenuTile> parentTileGroup, MenuTile selectedTile)
+        {
+            if (parentTileGroup.Count == 0)
+            {
+                throw new System.Exception("The parent tile group must contain at least one MenuTile instance.");
+            }
+
+            for (int i = 0; i < menuTileGroups.Count; ++i)
+            {
+                PopMenuTileGroup();
+            }
+
+            PushMenuTileGroup(parentTileGroup);
+            SetSelectedMenuTile(selectedTile);
+        }
+
         // Pushes the specified menu tile group onto the stack and sets it as the current interactive 'layer' of the menu and selects the first tile in the list.
         public void PushMenuTileGroup(List<MenuTile> menuTileGroup)
         {
@@ -127,6 +164,42 @@ namespace SurvivalHorrorFramework
                 menuTile.IsEnabled = true;
             }
             SetSelectedMenuTile(menuTileGroups.Peek()[0]);
+        }
+        
+        // If the specified menu tile belongs to the MenuTiles list updates the currently selected menu tile index so that the specified tile is the only one with the 'Selected' status.
+        public void SetSelectedMenuTile(MenuTile menuTile, bool playSoundEffect = false)
+        {
+            for (int i = 0; i < menuTileGroups.Peek().Count; ++i)
+            {
+                if (menuTileGroups.Peek()[i] == menuTile)
+                {
+                    menuTileGroups.Peek()[i].IsSelected = true;
+                    currentlySelectedMenuTileIndex = i;
+
+                    // If the currently selected tile is an inventory tile updates the menu dialog display to show it's name, else clears it.
+                    InventoryTile selectedInventoryTile = menuTileGroups.Peek()[i].GetComponent<InventoryTile>();
+                    if (selectedInventoryTile != null)
+                    {
+                        if (!selectedInventoryTile.IsEmpty)
+                        {
+                            MenuDialogDisplay.DisplayBasicText(selectedInventoryTile.StoredInventoryItemName);
+                        }
+                        else
+                        {
+                            MenuDialogDisplay.DisplayBasicText("");
+                        }
+                    }
+
+                    if (playSoundEffect)
+                    {
+                        audioSourceComponent.PlayOneShot(ChangeSelectedTileSound);
+                    }
+                }
+                else
+                {
+                    menuTileGroups.Peek()[i].IsSelected = false;
+                }
+            }
         }
 
 
@@ -302,7 +375,7 @@ namespace SurvivalHorrorFramework
             PushMenuTileGroup(itemInteractionMenuTileGroup);
             foreach (MenuTile itemInteractionMenuTile in itemInteractionMenuTileGroup)
             {
-                if (itemInteractionMenuTile.GetComponent<CheckitemMenuTile>())
+                if (itemInteractionMenuTile.GetComponent<CheckItemMenuTile>())
                 {
                     SetSelectedMenuTile(itemInteractionMenuTile);
                     break;
@@ -454,60 +527,8 @@ namespace SurvivalHorrorFramework
                     DeactivateMenu();
                 }
             }
-        }
-
-        // Pops all existing menu tile groups and pushes the specified menu tile group so that it becomes the new 'base' layer of the menu.
-        private void SetParentMenuTileGroup(List<MenuTile> parentTileGroup)
-        {
-            if (parentTileGroup.Count == 0)
-            {
-                throw new System.Exception("The parent tile group must contain at least one MenuTile instance.");
-            }
-
-            for (int i = 0; i < menuTileGroups.Count; ++i)
-            {
-                PopMenuTileGroup();
-            }
-
-            PushMenuTileGroup(parentTileGroup);
-        }
-
-        // If the specified menu tile belongs to the MenuTiles list updates the currently selected menu tile index so that the specified tile is the only one with the 'Selected' status.
-        private void SetSelectedMenuTile(MenuTile menuTile, bool playSoundEffect = false)
-        {
-            for (int i = 0; i < menuTileGroups.Peek().Count; ++i)
-            {
-                if (menuTileGroups.Peek()[i] == menuTile)
-                {
-                    menuTileGroups.Peek()[i].IsSelected = true;
-                    currentlySelectedMenuTileIndex = i;
-
-                    // If the currently selected tile is an inventory tile updates the menu dialog display to show it's name, else clears it.
-                    InventoryTile selectedInventoryTile = menuTileGroups.Peek()[i].GetComponent<InventoryTile>();
-                    if (selectedInventoryTile != null)
-                    {
-                        if (!selectedInventoryTile.IsEmpty)
-                        {
-                            MenuDialogDisplay.DisplayBasicText(selectedInventoryTile.StoredInventoryItemName);
-                        }
-                        else
-                        {
-                            MenuDialogDisplay.DisplayBasicText("");
-                        }
-                    }
-
-                    if (playSoundEffect)
-                    {
-                        audioSourceComponent.PlayOneShot(ChangeSelectedTileSound);
-                    }
-                }
-                else
-                {
-                    menuTileGroups.Peek()[i].IsSelected = false;
-                }
-            }
-        }
-
+        }               
+                
         private void PopAndDeselectAllMenuTileGroups()
         {
             while (menuTileGroups.Count > 0)
@@ -546,6 +567,11 @@ namespace SurvivalHorrorFramework
                         break;
                     }
                 }
+            }
+
+            if (OnPopMenuTileGroup != null)
+            {
+                OnPopMenuTileGroup.Invoke();
             }
         }
 

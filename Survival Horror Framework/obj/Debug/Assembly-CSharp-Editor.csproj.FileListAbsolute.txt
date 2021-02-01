@@ -206,9 +206,6 @@ C:\Users\spudm\Documents\GitHub\Survival-Horror-Framework\Survival Horror Framew
 C:\Users\spudm\Documents\GitHub\Survival-Horror-Framework\Survival Horror Framework\Temp\Bin\Debug\UnityEditor.iOS.Extensions.Xcode.dll
 C:\Users\spudm\Documents\GitHub\Survival-Horror-Framework\Survival Horror Framework\Temp\Bin\Debug\SyntaxTree.VisualStudio.Unity.Messaging.dll
 C:\Users\spudm\Documents\GitHub\Survival-Horror-Framework\Survival Horror Framework\Temp\Bin\Debug\Unity.CecilTools.dll
-C:\Users\spudm\Documents\GitHub\Survival-Horror-Framework\Survival Horror Framework\Temp\Bin\Debug\Assembly-CSharp-firstpass.pdb
-C:\Users\spudm\Documents\GitHub\Survival-Horror-Framework\Survival Horror Framework\Temp\Bin\Debug\Assembly-CSharp.pdb
-C:\Users\spudm\Documents\GitHub\Survival-Horror-Framework\Survival Horror Framework\Temp\Bin\Debug\Assembly-CSharp-Editor-firstpass.pdb
 C:\Users\spudm\Documents\GitHub\Survival-Horror-Framework\Survival Horror Framework\Temp\Bin\Debug\UnityEngine.xml
 C:\Users\spudm\Documents\GitHub\Survival-Horror-Framework\Survival Horror Framework\Temp\Bin\Debug\UnityEngine.AIModule.xml
 C:\Users\spudm\Documents\GitHub\Survival-Horror-Framework\Survival Horror Framework\Temp\Bin\Debug\UnityEngine.ARModule.xml

@@ -1,7 +1,7 @@
 ﻿////////////////////////////////////////
 // Author:              LEAKYFINGERS
 // Date created:        28.11.20
-// Date last edited:    27.01.21
+// Date last edited:    30.01.21
 ////////////////////////////////////////
 using System.Collections;
 using System.Collections.Generic;
@@ -49,18 +49,23 @@ namespace SurvivalHorrorFramework
         public override void ActivateTile(GameMenu gameMenu)
         {
             if (!IsEmpty)
-            {
+            {                
                 foreach (MenuTile childTile in ChildMenuTiles)
                 {
-                    if (childTile.GetComponent<CheckitemMenuTile>())
+                    if (childTile.GetComponent<CheckItemMenuTile>())
                     {
-                        childTile.GetComponent<CheckitemMenuTile>().InventoryItemToCheck = storedInventoryItem;
-                        base.ActivateTile(gameMenu);
-                        return;
+                        childTile.GetComponent<CheckItemMenuTile>().InventoryItemToCheck = storedInventoryItem;                                             
+                    }
+                    else if (childTile.GetComponent<CombineItemMenuTile>())
+                    {
+                        childTile.GetComponent<CombineItemMenuTile>().InitiallySelectedInventoryTile = this;                        
                     }
                 }
 
-                throw new System.Exception("For the InventoryTile " + name + " to function correctly, one of the assigned child tiles must have a CheckitemMenuTile component attached.");
+                base.ActivateTile(gameMenu);
+
+                // TODO - add check to ensure the inventory tile contains each of use/equip, check and combine child tile.
+                ////throw new System.Exception("For the InventoryTile " + name + " to function correctly, one of the assigned child tiles must have a CheckitemMenuTile component attached.");
             }
         }
 
@@ -87,6 +92,17 @@ namespace SurvivalHorrorFramework
             UpdateItemCountText();
             PlayMenuActivationSoundOnActivateTile = true;
         }
+
+
+        //public void DestroyStoredInventoryItem()
+        //{
+        //    if(!IsEmpty)
+        //    {
+        //        storedInventoryItem = null;
+
+        //        StoredInventoryItemImage.enabled = false;
+        //    }
+        //}
 
 
         protected override void Awake()

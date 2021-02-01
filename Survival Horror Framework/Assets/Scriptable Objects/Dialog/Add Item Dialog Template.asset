@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3ee349fea76f6e945a153077be56efa5, type: 3}
   m_Name: Add Item Dialog Template
   m_EditorClassIdentifier: 
-  DefaultCharacterRevealInterval: 0.1
-  FastCharacterRevealInterval: 0.05
+  DefaultCharacterRevealInterval: 0.01
+  FastCharacterRevealInterval: 0.005
   DisplayedText: 'Will you take the '
