@@ -69,6 +69,7 @@
     <Compile Include="Assets\Third-Party\Retro 3D Shader Pack for Unity\Example Scene\Scripts\EmissiveSphere.cs" />
     <Compile Include="Assets\Scripts\CombineItemMenuTile.cs" />
     <Compile Include="Assets\Scripts\InventoryTile.cs" />
+    <Compile Include="Assets\Scripts\UseItemMenuTile.cs" />
     <Compile Include="Assets\Scripts\ExitMenuTile.cs" />
     <Compile Include="Assets\Scripts\InventoryItem.cs" />
     <Compile Include="Assets\Scripts\SceneTransitionObject.cs" />
@@ -90,7 +91,8 @@
     <Compile Include="Assets\Scripts\Dialog.cs" />
     <Compile Include="Assets\Scripts\FixedCamera.cs" />
     <Compile Include="Assets\Scripts\CombineInventoryItemsReticle.cs" />
-    <Compile Include="Assets\Scripts\UseItemMenuTile.cs" />
+    <Compile Include="Assets\Scripts\ItemRecipe.cs" />
+    <Compile Include="Assets\Scripts\ItemRecipeBook.cs" />
   </ItemGroup>
   <ItemGroup>
      <None Include="Assets\Third-Party\Retro 3D Shader Pack for Unity\Shaders\CG_Includes\RetroFlatLit.cginc" />

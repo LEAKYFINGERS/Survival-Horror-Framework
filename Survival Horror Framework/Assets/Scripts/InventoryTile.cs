@@ -22,7 +22,7 @@ namespace SurvivalHorrorFramework
         {
             get { return storedInventoryItem; }
         }
-        
+
         // The property used to get whether no item/s are currently being stored in this inventory tile.
         public bool IsEmpty
         {
@@ -112,6 +112,19 @@ namespace SurvivalHorrorFramework
             PlayMenuActivationSoundOnActivateTile = true;
         }
 
+        // Removes all stored inventory items from this tile.
+        public void DestroyStoredInventoryItems()
+        {
+            if (IsEmpty)
+            {
+                throw new System.Exception("The DestroyStoredInventoryItems() function of InventoryTile " + name + " cannot be called as it is already empty.");
+            }
+
+            storedInventoryItemCount = 0;
+            storedInventoryItem = null;
+            StoredInventoryItemImage.enabled = false;
+            UpdateItemCountText();
+        }
         // Removes the specified count of the currently stored inventory items from this tile.
         public void DestroyStoredInventoryItems(uint toRemoveCount)
         {
@@ -123,9 +136,6 @@ namespace SurvivalHorrorFramework
             {
                 throw new System.Exception("The toRemoveCount parameter (" + toRemoveCount + ") of DestroyStoredInventoryItems() function of InventoryTile " + name + " must leave at least a remaining count of zero as a minimum after being subtracted from the current storedInventoryItemCount (" + storedInventoryItem + ".");
             }
-
-            Debug.Log(storedInventoryItemCount - toRemoveCount);
-            
 
             storedInventoryItemCount -= (int)toRemoveCount;
             if (IsEmpty)

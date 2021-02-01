@@ -17,4 +17,4 @@ MonoBehaviour:
   ModelPrefab: {fileID: 7878713674086844160, guid: a7e274f6a44120e42b6f35fd74487110,
     type: 3}
   DisplayName: <color=#188E26>Cube</color>
-  MaxStackCount: 3
+  MaxStackCount: 1

@@ -14,7 +14,7 @@ namespace SurvivalHorrorFramework
     public class CombineItemMenuTile : MenuTile
     {
         [HideInInspector]
-        public InventoryTile InitiallySelectedInventoryTile; // The inventory tile which was selected when the combine item tile was activated - contains the first inventory item of the two to be combined.
+        public InventoryTile InitiallySelectedInventoryTile; // The inventory tile which was selected when the combine item tile was activated - contains the first inventory item of the two to be combined.       
         public List<CombineInventoryItemsReticle> ChildCombineReticleMenuTiles; // The group of menu tiles which are pushed onto the menu stack and enabled when this tile is activated, used to choose the second of the two inventory items to be combined (excludes the currently selected inventory tile on activation).
 
         public override void ActivateTile(GameMenu gameMenu)
@@ -55,7 +55,7 @@ namespace SurvivalHorrorFramework
 
 
         private Transform intiallySelectedItemDisplayReticle; // The non-functional reticle used to display the initially-selected menu item to be combined with the second item chosen by the player.
-        private bool destroyInitiallySelectedItemDisplayReticleAddedToEvent;
+        private bool destroyInitiallySelectedItemDisplayReticleAddedToEvent;        
 
         // The function to be called each time a menu group is popped to ensure the initially-selected inventory item reticle is destroyed.
         private void DestroyInitiallySelectedItemDisplayReticle()
