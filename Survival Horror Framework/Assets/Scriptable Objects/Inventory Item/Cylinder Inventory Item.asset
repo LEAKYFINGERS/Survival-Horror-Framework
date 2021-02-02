@@ -17,4 +17,5 @@ MonoBehaviour:
   ModelPrefab: {fileID: 2248070508955438873, guid: e2dba634a09d6774fa429bb9f6ddaece,
     type: 3}
   DisplayName: <color=#188E26>Cylinder</color>
+  UseVerb: CYLINDER
   MaxStackCount: 1

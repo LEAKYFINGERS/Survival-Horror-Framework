@@ -18,4 +18,5 @@ MonoBehaviour:
   ModelPrefab: {fileID: 2970793063688905689, guid: 163ce409937f9064c95463f7e090a3b1,
     type: 3}
   DisplayName: <color=#188E26>Hand</color>
+  UseVerb: HAND
   MaxStackCount: 1

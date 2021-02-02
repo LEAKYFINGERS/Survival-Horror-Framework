@@ -1,11 +1,12 @@
 ﻿////////////////////////////////////////
 // Author:              LEAKYFINGERS
 // Date created:        01.02.21
-// Date last edited:    01.02.21
+// Date last edited:    02.02.21
 ////////////////////////////////////////
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace SurvivalHorrorFramework
 {
@@ -15,6 +16,7 @@ namespace SurvivalHorrorFramework
         [HideInInspector]
         //public InventoryItem InventoryItemToUse;
         public InventoryTile InventoryTileToUse;
+        public Text VerbUIText; // The UI text element displayed on the tile which changes according to the UseVerb of the currently selected inventory item. 
 
         public override void ActivateTile(GameMenu gameMenu)
         {
@@ -30,8 +32,17 @@ namespace SurvivalHorrorFramework
             }
 
             InventoryTileToUse = null;
+        }
 
-            //Debug.Log("Using inventory item " + InventoryItemToUse.DisplayName);
+
+        protected override void OnEnabled()
+        {
+            if (InventoryTileToUse == null)
+            {
+                throw new System.Exception("In order for the UseItemTile " + name + " to be enabled, the value for InventoryItemToUse cannot be null.");
+            }
+
+            VerbUIText.text = InventoryTileToUse.StoredInventoryItem.UseVerb;
         }
     }
 }

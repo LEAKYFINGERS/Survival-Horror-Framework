@@ -1,7 +1,7 @@
 ﻿////////////////////////////////////////
 // Author:              LEAKYFINGERS
 // Date created:        17.11.20
-// Date last edited:    03.01.21
+// Date last edited:    02.02.21
 ////////////////////////////////////////
 using System.Collections;
 using System.Collections.Generic;
@@ -14,10 +14,10 @@ namespace SurvivalHorrorFramework
     // The script for an individual menu tile which can be selected and activated by the player in the game menu as well as inherited from to extend functionality.
     public class MenuTile : MonoBehaviour
     {
-        public MenuTile TileToLeft; 
-        public MenuTile TileToRight; 
-        public MenuTile TileAbove; 
-        public MenuTile TileBelow; 
+        public MenuTile TileToLeft;
+        public MenuTile TileToRight;
+        public MenuTile TileAbove;
+        public MenuTile TileBelow;
         public Sprite DefaultSprite;
         public Sprite SelectedSprite;
         public bool isVisibleWhenNotEnabled = false;
@@ -36,14 +36,16 @@ namespace SurvivalHorrorFramework
                     {
                         transform.GetChild(i).gameObject.SetActive(true);
                     }
+
+                    OnEnabled();
                 }
-                else if(!isVisibleWhenNotEnabled)
+                else if (!isVisibleWhenNotEnabled)
                 {
-                    imageComponent.enabled = false;              
-                    for(int i = 0; i < transform.childCount; ++i)
+                    imageComponent.enabled = false;
+                    for (int i = 0; i < transform.childCount; ++i)
                     {
                         transform.GetChild(i).gameObject.SetActive(false);
-                    }                    
+                    }
                 }
 
                 IsSelected = false;
@@ -86,7 +88,10 @@ namespace SurvivalHorrorFramework
             imageComponent = GetComponent<Image>();
 
             IsSelected = false;
-            IsEnabled = false;            
+            IsEnabled = false;
         }
+
+        // A base function which is called when the MenuTile has been enabled.
+        protected virtual void OnEnabled() { } 
     }
 }

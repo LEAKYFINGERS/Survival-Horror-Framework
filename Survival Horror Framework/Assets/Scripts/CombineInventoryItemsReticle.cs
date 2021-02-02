@@ -1,7 +1,7 @@
 ﻿////////////////////////////////////////
 // Author:              LEAKYFINGERS
 // Date created:        01.02.21
-// Date last edited:    01.02.21
+// Date last edited:    02.02.21
 ////////////////////////////////////////
 using System.Collections;
 using System.Collections.Generic;
@@ -44,8 +44,8 @@ namespace SurvivalHorrorFramework
 
                         AttachedInventoryTile.DestroyStoredInventoryItems();
 
-                        InitiallySelectedInventoryTile = null;
                         gameMenu.SetParentMenuTileGroup(gameMenu.DefaultParentMenuTileGroup, InitiallySelectedInventoryTile); // Resets the menu to be back in the first 'layer' but with the newly combined item/s selected.
+                        InitiallySelectedInventoryTile = null;
                     }
                 }
             }            
