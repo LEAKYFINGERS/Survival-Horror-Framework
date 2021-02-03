@@ -1,7 +1,7 @@
 ﻿////////////////////////////////////////
 // Author:              LEAKYFINGERS
 // Date created:        16.11.20
-// Date last edited:    01.02.21
+// Date last edited:    03.02.21
 ////////////////////////////////////////
 using System.Collections;
 using System.Collections.Generic;
@@ -45,7 +45,23 @@ namespace SurvivalHorrorFramework
         {
             get { return menuTileGroups.Peek()[currentlySelectedMenuTileIndex]; }
         }
-        
+
+        // The property used to get whether all the inventory tiles in the menu are currently empty.
+        public bool IsInventoryEmpty
+        {
+            get
+            {
+                foreach (InventoryTile tile in InventoryTiles)
+                {
+                    if (!tile.IsEmpty)
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        }
+
         // Returns whether the specified inventory item can be added to either an empty inventory tile or one which contains other instances of the same inventory item and isn't full.
         public bool CanItemBeAddedToInventory(InventoryItem itemToAdd)
         {
@@ -58,7 +74,7 @@ namespace SurvivalHorrorFramework
             }
 
             return false;
-        }        
+        }
 
         // Attempts to add the specified item to one of the inventory tiles in the menu - returns 'true' if successful, else if all available inventory slots are full returns 'false'.
         public bool TryAddItemToPlayerInventory(InventoryItem itemToAdd)
@@ -131,7 +147,7 @@ namespace SurvivalHorrorFramework
                 throw new System.Exception("The parent tile group must contain at least one MenuTile instance.");
             }
 
-            while(menuTileGroups.Count > 0)
+            while (menuTileGroups.Count > 0)
             {
                 PopMenuTileGroup();
             }
@@ -165,7 +181,7 @@ namespace SurvivalHorrorFramework
             }
             SetSelectedMenuTile(menuTileGroups.Peek()[0]);
         }
-        
+
         // If the specified menu tile belongs to the MenuTiles list updates the currently selected menu tile index so that the specified tile is the only one with the 'Selected' status.
         public void SetSelectedMenuTile(MenuTile menuTile, bool playSoundEffect = false)
         {
@@ -202,6 +218,42 @@ namespace SurvivalHorrorFramework
             }
         }
 
+        // Updates the static scene transferrable data object with the current state of the player's inventory so it can be loaded into the next scene.
+        public void UpdateSceneTransferrableDataWithInventoryData()
+        {
+            SceneTransferrableData.InventoryTileData = new TransferrableInventoryTileData[InventoryTiles.Length];
+            for (int i = 0; i < InventoryTiles.Length; ++i)
+            {
+                SceneTransferrableData.InventoryTileData[i].StoredInventoryItem = InventoryTiles[i].StoredInventoryItem;
+                SceneTransferrableData.InventoryTileData[i].StoredInventoryItemCount = InventoryTiles[i].StoredInventoryItemCount;
+            }
+        }
+
+        // Clears the inventory and populates it with the inventory items currently stored in the static scene transferrable data object.
+        public void PopulateInventoryTilesWithSceneTransferrableData()
+        {
+            if (SceneTransferrableData.InventoryTileData == null)
+            {
+                return;
+            }
+
+            for (int i = 0; i < SceneTransferrableData.InventoryTileData.Length; ++i)
+            {
+                if(!InventoryTiles[i].IsEmpty)
+                {
+                    InventoryTiles[i].DestroyStoredInventoryItems();
+                }
+
+                if (SceneTransferrableData.InventoryTileData[i].StoredInventoryItem != null)
+                {
+                    for (int j = 0; j < SceneTransferrableData.InventoryTileData[i].StoredInventoryItemCount; ++j)
+                    {
+                        InventoryTiles[i].StoreInventoryItem(SceneTransferrableData.InventoryTileData[i].StoredInventoryItem);
+                    }
+                }
+            }
+        }
+
 
         private AudioSource audioSourceComponent;
         private Color activationFadeImageColor; // The initial color tint of the activation fade image - stored so the image can transition between this color and completely transparent.
@@ -212,10 +264,11 @@ namespace SurvivalHorrorFramework
         private bool wasHorizontalInputDownDuringPreviousUpdate;
         private bool wasVerticalInputDownDuringPreviousUpdate;
         private bool wasUseInputDownDuringPreviousUpdate;
-        private bool wasRunInputDownDuringPreviousUpdate;        
+        private bool wasRunInputDownDuringPreviousUpdate;
         private bool isMenuProcessCoroutineRunning; // A flag used to specify whether the menu is currently running in it's default state or is going through some sequential process handled by a coroutine (activating, viewing an item, deactivation, etc.)
         private bool hasDialogDisplayFinishedDisplayingAllSnippets; // Whether the menu dialog display has finished displaying all the current snippets and is awaiting user input to proceed.
         private bool hasDialogDisplayExitedDialog; // Whether the menu dialog display has finished displaying all the current snippets and the player has pressed an input to 'exit' the dialog process.
+        private bool hasMenuBeenActivatedSinceSceneWasLoaded;
         private int currentlySelectedMenuTileIndex; // The index of the currently selected menu tile within the group that is currently on the top of the menu groups stack.
 
         private IEnumerator ActivateMenuInDefaultModeCoroutine()
@@ -229,6 +282,12 @@ namespace SurvivalHorrorFramework
             yield return new WaitForSecondsRealtime(ActivationFadeDuration / 2.0f);
 
             BackgroundImage.gameObject.SetActive(true);
+            // Populates the player inventory with the static scene-transferrable inventory data if it hasn't already been - has to be done while the menu is active and the inventory tiles are enabled.
+            if (!hasMenuBeenActivatedSinceSceneWasLoaded)
+            {
+                PopulateInventoryTilesWithSceneTransferrableData();
+                hasMenuBeenActivatedSinceSceneWasLoaded = true;
+            }
 
             SetParentMenuTileGroup(DefaultParentMenuTileGroup);
 
@@ -252,6 +311,12 @@ namespace SurvivalHorrorFramework
             yield return new WaitForSecondsRealtime(ActivationFadeDuration / 2.0f);
 
             BackgroundImage.gameObject.SetActive(true);
+            // Populates the player inventory with the static scene-transferrable inventory data if it hasn't already been - has to be done while the menu is active and the inventory tiles are enabled.
+            if (!hasMenuBeenActivatedSinceSceneWasLoaded)
+            {
+                PopulateInventoryTilesWithSceneTransferrableData();
+                hasMenuBeenActivatedSinceSceneWasLoaded = true;
+            }
 
             // Fades the activation fade image back to clear.            
             FadeHandler.FadeToColor(Color.clear, ActivationFadeDuration / 2.0f);
@@ -340,7 +405,7 @@ namespace SurvivalHorrorFramework
                 {
                     MenuDialogDisplay.DisplayDialog(inventoryItem.ExamineDialog, false);
                     hasDialogDisplayExitedDialog = false;
-                    while(!hasDialogDisplayExitedDialog)
+                    while (!hasDialogDisplayExitedDialog)
                     {
                         yield return null;
                     }
@@ -527,8 +592,8 @@ namespace SurvivalHorrorFramework
                     DeactivateMenu();
                 }
             }
-        }               
-                
+        }
+
         private void PopAndDeselectAllMenuTileGroups()
         {
             while (menuTileGroups.Count > 0)

@@ -1,7 +1,7 @@
 ﻿////////////////////////////////////////
 // Author:              LEAKYFINGERS
 // Date created:        28.11.20
-// Date last edited:    30.01.21
+// Date last edited:    03.02.21
 ////////////////////////////////////////
 using System.Collections;
 using System.Collections.Generic;
@@ -33,6 +33,12 @@ namespace SurvivalHorrorFramework
         public bool IsFull
         {
             get { return storedInventoryItem != null && storedInventoryItemCount == storedInventoryItem.MaxStackCount; }
+        }
+
+        // The property used to get the count of the stack of items currently stored in this inventory tile.
+        public int StoredInventoryItemCount
+        {
+            get { return storedInventoryItemCount; }
         }
 
         // The property used to get the displayed name of the currently stored inventory item - if no item is currently being stored, returns an empty string.

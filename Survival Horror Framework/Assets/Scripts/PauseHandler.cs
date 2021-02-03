@@ -29,7 +29,6 @@ namespace SurvivalHorrorFramework
                 }
 
                 isScenePaused = true;
-                Debug.Log("Scene paused"); // DEBUG
             }
         }        
 
@@ -45,7 +44,6 @@ namespace SurvivalHorrorFramework
                 }
 
                 isScenePaused = false;
-                Debug.Log("Scene unpaused"); // DEBUG
             }
         }
 

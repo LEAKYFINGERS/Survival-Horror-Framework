@@ -1,7 +1,7 @@
 ﻿////////////////////////////////////////
 // Author:              LEAKYFINGERS
 // Date created:        05.12.20
-// Date last edited:    22.12.20
+// Date last edited:    03.02.21
 ////////////////////////////////////////
 using System.Collections;
 using System.Collections.Generic;
@@ -13,6 +13,7 @@ namespace SurvivalHorrorFramework
     // A script for an interactive object which plays an animated vignette before loading another scene when interacted with.
     public class SceneTransitionObject : InteractiveObject
     {
+        public GameMenu SceneGameMenu; // The menu used by the player in the scene to store inventory items which can be transferred between scenes.
         public Transform AnimatedVignetteObjectPrefab; // The prefab used to spawn the animated vignette object which indicates the player is transitioning scenes e.g. a set of doors opening, a ladder, etc.
         public VignetteCamera SceneVignetteCamera;
         public int DestinationSceneIndex;
@@ -20,6 +21,8 @@ namespace SurvivalHorrorFramework
 
         public override void Interact()
         {
+            SceneGameMenu.UpdateSceneTransferrableDataWithInventoryData();
+
             SceneTransferrableData.NextSceneEntrancePointName = DestinationSceneEntrancePointName; // Updates the transferrable scene entrance point name value so that the specifed entrance point will be used to position the player once the destination scene is loaded.
             SceneVignetteCamera.PlayVignetteAndLoadScene(AnimatedVignetteObjectPrefab, DestinationSceneIndex);
         }

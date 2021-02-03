@@ -18,4 +18,4 @@ MonoBehaviour:
     type: 3}
   DisplayName: <color=#188E26>Cylinder</color>
   UseVerb: CYLINDER
-  MaxStackCount: 1
+  MaxStackCount: 3
