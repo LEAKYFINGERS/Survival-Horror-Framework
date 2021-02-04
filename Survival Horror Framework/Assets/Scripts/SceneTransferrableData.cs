@@ -1,7 +1,7 @@
 ﻿////////////////////////////////////////
 // Author:              LEAKYFINGERS
 // Date created:        20.12.20
-// Date last edited:    03.02.21
+// Date last edited:    04.02.21
 ////////////////////////////////////////
 using System.Collections;
 using System.Collections.Generic;
@@ -18,7 +18,13 @@ namespace SurvivalHorrorFramework
     // A static class used to preseve data such as player status, inventory, etc. between scenes.
     public static class SceneTransferrableData
     {
-        public static TransferrableInventoryTileData[] InventoryTileData;
+        public static List<string> PermanentlyDestroyedObjectUniqueIDs; // A list containing the unique IDs of all permanently destroyed objects so that they can be referenced and automatically deleted on scene load.
+        public static TransferrableInventoryTileData[] InventoryTileData;        
         public static string NextSceneEntrancePointName; // The name of the SceneEntrancePoint instance within the next scene which will be used to position and orient the player character when it loads.
+
+        static SceneTransferrableData()
+        {
+            PermanentlyDestroyedObjectUniqueIDs = new List<string>();
+        }   
     }
 }
