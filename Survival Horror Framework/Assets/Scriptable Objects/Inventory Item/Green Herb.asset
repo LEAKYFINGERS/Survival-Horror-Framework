@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ecf3633b888d0ca47a77d4db1eccdf24, type: 3}
+  m_Name: Green Herb
+  m_EditorClassIdentifier: 
+  ExamineDialog: {fileID: 11400000, guid: 926b6bb02ec59cd4292269b759a3c1d6, type: 2}
+  InventoryTileSprite: {fileID: 21300000, guid: 8c52c238c6bafd24aaf2dfc22784fa12,
+    type: 3}
+  ModelPrefab: {fileID: 2522184908572293574, guid: d42a1c31de5c0494f93098f55cfe919b,
+    type: 3}
+  DestroyOnUse: 1
+  DisplayName: <color=#188E26>Green Herb</color>
+  UseVerb: USE
+  MaxStackCount: 1
+  HealthToAddWhenUsed: 25

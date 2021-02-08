@@ -1,7 +1,7 @@
 ﻿////////////////////////////////////////
 // Author:              LEAKYFINGERS
 // Date created:        29.12.20
-// Date last edited:    14.01.21
+// Date last edited:    08.02.21
 ////////////////////////////////////////
 using System.Collections;
 using System.Collections.Generic;
@@ -67,8 +67,8 @@ namespace SurvivalHorrorFramework
             {
                 direction.Normalize();
 
-                currentlyDisplayedInventoryItem.RotateAround(currentlyDisplayedInventoryItem.position, Vector3.down, direction.x * DisplayedItemRotateSpeedInDegrees * Time.deltaTime);
-                currentlyDisplayedInventoryItem.RotateAround(currentlyDisplayedInventoryItem.position, Vector3.left, direction.y * DisplayedItemRotateSpeedInDegrees * Time.deltaTime);
+                currentlyDisplayedInventoryItem.RotateAround(currentlyDisplayedInventoryItem.position, -transform.up, direction.x * DisplayedItemRotateSpeedInDegrees * Time.deltaTime);
+                currentlyDisplayedInventoryItem.RotateAround(currentlyDisplayedInventoryItem.position, transform.right, direction.y * DisplayedItemRotateSpeedInDegrees * Time.deltaTime);
             }
         }
 

@@ -1,12 +1,13 @@
 ﻿////////////////////////////////////////
 // Author:              LEAKYFINGERS
 // Date created:        25.10.20
-// Date last edited:    20.12.20
+// Date last edited:    08.02.21
 ////////////////////////////////////////
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
+using TMPro;
 
 namespace SurvivalHorrorFramework
 {
@@ -16,18 +17,37 @@ namespace SurvivalHorrorFramework
     public class TankControlPlayer : MonoBehaviour
     {
         public PlayerInteractionTrigger InteractionTrigger; // The trigger collider used to determine which interactive objects within the scene are currently within reach of the player.        
+        public TextMeshProUGUI HealthDisplayUIText; // The UI text element used to display the current health of the player.
         public float WalkSpeed = 2.0f; // The movement speed of the player in units-per-second when walking forwards.
         public float RetreatSpeed = 1.5f; // The movement speed of the player in units-per-second when walking backwards.
         public float RunSpeed = 4.0f; // The movement speed of the player in units-per-second when running forwards - cannot run backwards.
         public float StationaryRotateSpeed = 270.0f; // The rotation speed of the player in degrees-per-second when standing in place.
         public float MovingRotateSpeed = 90.0f; // The rotation speed of the player in degrees-per-second when walking or running.
         public float AnimationBlendDuration = 0.15f; // The duration of the animtion crossfades when the player transitions between clips.
+        public uint MaxHealth = 100;
+
+        public uint CurrentHealth
+        {
+            get { return currentHealth; }
+        }
+
+        public void SetHealth(uint health)
+        {
+            if (health > MaxHealth)
+            {
+                throw new System.Exception("The player health cannot be set at " + health + " because the current MaxHealth value is " + MaxHealth + ".");
+            }
+
+            currentHealth = health;
+            HealthDisplayUIText.text = "Health: " + currentHealth.ToString() + "/" + MaxHealth.ToString();
+        }
 
 
         private Animator animatorComponent;
         private CharacterController characterControllerComponent;        
         private bool isPaused;
         private bool wasUseInputDownDuringPreviousUpdate;
+        private uint currentHealth;
 
         private void Awake()
         {
@@ -54,6 +74,8 @@ namespace SurvivalHorrorFramework
                     }
                 }                
             }
+
+            SetHealth(MaxHealth); // TODO - add player health to SceneTransferrableData otherwise it will be set to max each scene load.
         }
 
         private void Update()
@@ -62,7 +84,13 @@ namespace SurvivalHorrorFramework
             {
                 UpdateInteraction();
                 UpdateMovement();
-                UpdateAnimation();
+                UpdateAnimation();                
+            }
+
+            // DEBUG
+            if (Input.GetKeyDown(KeyCode.H) && currentHealth > 0)
+            {
+                SetHealth(currentHealth - 10);
             }
         }
 
@@ -151,6 +179,6 @@ namespace SurvivalHorrorFramework
             animatorComponent.speed = 1.0f;
 
             isPaused = false;
-        }
+        }        
     }
 }

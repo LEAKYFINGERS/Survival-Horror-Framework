@@ -1,7 +1,7 @@
 ﻿////////////////////////////////////////
 // Author:              LEAKYFINGERS
 // Date created:        01.02.21
-// Date last edited:    02.02.21
+// Date last edited:    08.02.21
 ////////////////////////////////////////
 using System.Collections;
 using System.Collections.Generic;
@@ -13,8 +13,7 @@ namespace SurvivalHorrorFramework
     // The menu tile which allows the player to use/equip the item in the currently selected inventory tile.
     public class UseItemMenuTile : MenuTile
     {
-        [HideInInspector]
-        //public InventoryItem InventoryItemToUse;
+        [HideInInspector]        
         public InventoryTile InventoryTileToUse;
         public Text VerbUIText; // The UI text element displayed on the tile which changes according to the UseVerb of the currently selected inventory item. 
 
@@ -24,14 +23,19 @@ namespace SurvivalHorrorFramework
             {
                 throw new System.Exception("In order for the UseItemTile " + name + " to be activated, the value for InventoryItemToUse cannot be null.");
             }
-
+            
             if (!InventoryTileToUse.IsEmpty)
             {
-                InventoryTileToUse.DestroyStoredInventoryItems(1);
+                InventoryTileToUse.StoredInventoryItem.Use();
+
+                if (InventoryTileToUse.StoredInventoryItem.DestroyOnUse)
+                {
+                    InventoryTileToUse.DestroyStoredInventoryItems(1);
+                }
                 gameMenu.SetParentMenuTileGroup(gameMenu.DefaultParentMenuTileGroup);
             }
 
-            InventoryTileToUse = null;
+            InventoryTileToUse = null;           
         }
 
 

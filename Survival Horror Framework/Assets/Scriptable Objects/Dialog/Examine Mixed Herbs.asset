@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3ee349fea76f6e945a153077be56efa5, type: 3}
+  m_Name: Examine Mixed Herbs
+  m_EditorClassIdentifier: 
+  DefaultCharacterRevealInterval: 0.01
+  FastCharacterRevealInterval: 0.005
+  DisplayedText: A mixture of 2 different herbs. Completely restores health
