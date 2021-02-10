@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace SurvivalHorrorFramework
 {
-    // The script for a gameobject used to indicate one of the points the player character can 'enter' a scene using position and orientation.
+    // The script for a gameobject used to indicate one of the points the player character can 'enter' a scene using position and orientation - must have the same name within the scene as the associated SceneTransitionObject to allow the SceneTransferrableData to store if it has been unlocked in a previous scene.
     public class SceneEntrancePoint : MonoBehaviour
     {
         public Color GizmoDrawColor = new Color(1.0f, 0.0f, 0.0f, 1.0f); // The color used to draw a line gizmo to indicate the position and orientation of the scene entrance point.
